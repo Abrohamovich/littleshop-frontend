@@ -1,77 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import { categoryApi } from '../services/categoryApi';
+import React, { useState } from 'react';
+import { categoryApi } from '../../services/categoryApi.js';
 
-const UpdateCategoryForm = ({ categoryId, onSuccess, onCancel }) => {
+const CreateCategoryForm = ({ onSuccess, onCancel }) => {
     const [formData, setFormData] = useState({
         name: '',
         description: ''
     });
     const [loading, setLoading] = useState(false);
-    const [initialLoading, setInitialLoading] = useState(true);
 
-    useEffect(() => {
-        const loadCategory = async () => {
-            if (!categoryId) {
-                console.error('No category ID provided');
-                onCancel();
-                return;
-            }
-
-            setInitialLoading(true);
-            try {
-                const category = await categoryApi.getCategoryById(categoryId);
-                setFormData({
-                    name: category.name || '',
-                    description: category.description || ''
-                });
-            } catch (error) {
-                console.error('Error loading category:', error);
-                // Handle error - maybe show a message or go back
-                onCancel();
-            } finally {
-                setInitialLoading(false);
-            }
-        };
-
-        loadCategory();
-    }, [categoryId, onCancel]);
-
-    const handleUpdateCategory = async (continueCreating = false, goBack = false) => {
+    const handleCreateCategory = async (continueCreating = false, goBack = false) => {
         if (!formData.name.trim()) return;
 
         setLoading(true);
         try {
-            await categoryApi.updateCategory(categoryId, formData);
+            await categoryApi.createCategory(formData);
+            setFormData({ name: '', description: '' });
 
             if (goBack || !continueCreating) {
                 onSuccess();
             }
         } catch (error) {
-            console.error('Error updating category:', error);
+            console.error('Error creating category:', error);
         } finally {
             setLoading(false);
         }
     };
 
-    if (initialLoading) {
-        return (
-            <div className="p-8">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-2 text-gray-500">Loading category...</p>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="p-8">
             <div className="mb-6">
-                <h1 className="text-2xl font-bold text-gray-900">Update Category</h1>
+                <h1 className="text-2xl font-bold text-gray-900">Create Category</h1>
                 <nav className="flex mt-2 text-sm text-gray-600">
                     <span>Categories</span>
-                    <span className="mx-2">&gt;</span>
-                    <span>Update</span>
+                    <span className="mx-2">&gt</span>
+                    <span>Create</span>
                 </nav>
             </div>
 
@@ -108,11 +70,18 @@ const UpdateCategoryForm = ({ categoryId, onSuccess, onCancel }) => {
 
                 <div className="flex space-x-4 mt-6">
                     <button
-                        onClick={() => handleUpdateCategory(false, true)}
+                        onClick={() => handleCreateCategory(true, false)}
+                        disabled={!formData.name.trim() || loading}
+                        className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    >
+                        Create and Continue Creating
+                    </button>
+                    <button
+                        onClick={() => handleCreateCategory(false, true)}
                         disabled={!formData.name.trim() || loading}
                         className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
                     >
-                        {loading ? 'Updating...' : 'Update and Go Back'}
+                        Create and Go Back
                     </button>
                     <button
                         onClick={onCancel}
@@ -127,4 +96,4 @@ const UpdateCategoryForm = ({ categoryId, onSuccess, onCancel }) => {
     );
 };
 
-export default UpdateCategoryForm;
+export default CreateCategoryForm;

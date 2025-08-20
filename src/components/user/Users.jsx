@@ -1,82 +1,86 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Plus, MoreVertical, Eye, ChevronDown } from 'lucide-react';
-import { categoryApi } from '../services/categoryApi';
-import CategoriesTable from './CategoriesTable';
-import CreateCategoryForm from './CreateCategoryForm';
-import ColumnSelector from './ColumnSelector';
-import UpdateCategoryForm from "./UpdateCategoryForm.jsx";
+import { userApi } from '../../services/userApi.js';
+import UsersTable from './UsersTable.jsx';
+import CreateUserForm from './CreateUserForm.jsx';
+import ColumnSelector from '../ColumnSelector.jsx';
+import UpdateUserForm from "./UpdateUserForm.jsx";
 
 const AVAILABLE_COLUMNS = [
     { key: 'id', label: 'ID', type: 'number' },
-    { key: 'name', label: 'Name', type: 'text' },
-    { key: 'description', label: 'Description', type: 'text' },
+    { key: 'firstName', label: 'First Name', type: 'text' },
+    { key: 'lastName', label: 'Last Name', type: 'text' },
+    { key: 'email', label: 'Email', type: 'text' },
+    { key: 'role', label: 'Role', type: 'text' },
+    { key: 'phone', label: 'Phone', type: 'text' },
     { key: 'createdAt', label: 'Created At', type: 'date' },
     { key: 'updatedAt', label: 'Updated At', type: 'date' }
 ];
 
-const Categories = () => {
-    const [categories, setCategories] = useState([]);
+const Users = () => {
+    const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-    const [searchField] = useState('name');
+    const [searchField] = useState('firstName');
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [totalElements, setTotalElements] = useState(0);
     const [pageSize, setPageSize] = useState(10);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [showUpdateForm, setShowUpdateForm] = useState(false);
-    const [selectedCategoryId, setSelectedCategoryId] = useState(null);
-    const [visibleColumns, setVisibleColumns] = useState(['id', 'name', 'description']);
+    const [selectedUserId, setSelectedUserId] = useState(null);
+    const [visibleColumns, setVisibleColumns] = useState(['firstName', 'lastName', 'email', 'role']);
     const [showColumnSelector, setShowColumnSelector] = useState(false);
 
-    const loadCategories = useCallback(async () => {
+    const loadUsers = useCallback(async () => {
         setLoading(true);
         try {
             const searchParams = {};
-            if (searchTerm && searchField === 'name') searchParams.name = searchTerm;
-            if (searchTerm && searchField === 'description') searchParams.description = searchTerm;
+            if (searchTerm && searchField === 'firstName') searchParams.firstName = searchTerm;
+            if (searchTerm && searchField === 'lastName') searchParams.lastName = searchTerm;
+            if (searchTerm && searchField === 'email') searchParams.email = searchTerm;
 
-            const response = await categoryApi.getCategories(currentPage, pageSize, searchParams.name, searchParams.description);
-            setCategories(Array.isArray(response.content) ? response.content : []);
+            const response = await userApi.getUsers(currentPage, pageSize, searchParams.firstName, searchParams.lastName, searchParams.email);
+            setUsers(Array.isArray(response.content) ? response.content : []);
             setTotalPages(response.totalPages || 0);
             setTotalElements(response.totalElements || 0);
         } catch (error) {
-            console.error('Error loading categories:', error);
-            setCategories([]);
+            console.error('Error loading users:', error);
+            setUsers([]);
         } finally {
             setLoading(false);
         }
     }, [currentPage, pageSize, searchTerm, searchField]);
 
     useEffect(() => {
-        loadCategories();
-    }, [loadCategories]);
+        loadUsers();
+    }, [loadUsers]);
 
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
         setCurrentPage(0);
     };
 
-    const handleDeleteCategory = async (id) => {
-        if (window.confirm('Are you sure you want to delete this category?')) {
+    const handleDeleteUser = async (id) => {
+        if (window.confirm('Are you sure you want to delete this user?')) {
             try {
-                await categoryApi.deleteCategory(id);
-                loadCategories();
+                await userApi.deleteUser(id);
+                loadUsers();
             } catch (error) {
-                console.error('Error deleting category:', error);
+                console.error('Error deleting user:', error);
             }
         }
     };
 
-    const handleUpdateCategory = (categoryId) => {
-        setSelectedCategoryId(categoryId);
+    const handleUpdateUser = (userId) => {
+        setSelectedUserId(userId);
         setShowUpdateForm(true);
     };
 
     const handleUpdateSuccess = () => {
         setShowUpdateForm(false);
-        setSelectedCategoryId(null);
-        loadCategories();
+        setSelectedUserId(null);
+        loadUsers();
     };
 
     const toggleColumn = (columnKey) => {
@@ -94,12 +98,12 @@ const Categories = () => {
 
     const handleCreateSuccess = () => {
         setShowCreateForm(false);
-        loadCategories();
+        loadUsers();
     };
 
     if (showCreateForm) {
         return (
-            <CreateCategoryForm
+            <CreateUserForm
                 onSuccess={handleCreateSuccess}
                 onCancel={() => setShowCreateForm(false)}
             />
@@ -108,12 +112,12 @@ const Categories = () => {
 
     if (showUpdateForm) {
         return (
-            <UpdateCategoryForm
-                categoryId={selectedCategoryId}
+            <UpdateUserForm
+                userId={selectedUserId}
                 onSuccess={handleUpdateSuccess}
                 onCancel={() => {
                     setShowUpdateForm(false);
-                    setSelectedCategoryId(null);
+                    setSelectedUserId(null);
                 }}
             />
         );
@@ -122,7 +126,7 @@ const Categories = () => {
     return (
         <div className="p-8">
             <div className="mb-6">
-                <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
+                <h1 className="text-2xl font-bold text-gray-900">Users</h1>
             </div>
 
             <div className="bg-white rounded-lg shadow-sm border border-gray-200">
@@ -133,7 +137,7 @@ const Categories = () => {
                                 <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                                 <input
                                     type="text"
-                                    placeholder="Search categories..."
+                                    placeholder="Search users..."
                                     value={searchTerm}
                                     onChange={handleSearch}
                                     className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -157,13 +161,13 @@ const Categories = () => {
                     </div>
                 </div>
 
-                <CategoriesTable
-                    categories={categories}
+                <UsersTable
+                    users={users}
                     loading={loading}
                     visibleColumns={visibleColumns}
                     availableColumns={AVAILABLE_COLUMNS}
-                    onDeleteCategory={handleDeleteCategory}
-                    onUpdateCategory={handleUpdateCategory}
+                    onDeleteUser={handleDeleteUser}
+                    onUpdateUser={handleUpdateUser}
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     pageSize={pageSize}
@@ -183,4 +187,4 @@ const Categories = () => {
     );
 };
 
-export default Categories;
+export default Users;

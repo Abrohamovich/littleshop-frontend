@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import Infopanel from './components/Infopanel';
-import Categories from './components/Categories';
+import Categories from './components/category/Categories.jsx';
+import Customers from './components/customer/Customers.jsx';
+import Suppliers from './components/supplier/Suppliers.jsx';
+import Users from './components/user/Users.jsx';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 
@@ -14,15 +17,15 @@ const App = () => {
             case 'categories':
                 return <Categories />;
             case 'customers':
-                return <PlaceholderView title="Customers" />;
+                return <Customers />;
             case 'orders':
                 return <PlaceholderView title="Orders" />;
             case 'offers':
                 return <PlaceholderView title="Offers" />;
             case 'suppliers':
-                return <PlaceholderView title="Suppliers" />;
+                return <Suppliers />;
             case 'users':
-                return <PlaceholderView title="Users" />;
+                return <Users />;
             default:
                 return <Infopanel />;
         }
