@@ -52,7 +52,7 @@ const CreateUserForm = ({ onSuccess, onCancel }) => {
                 <h1 className="text-2xl font-bold text-gray-900">Create User</h1>
                 <nav className="flex mt-2 text-sm text-gray-600">
                     <span>Categories</span>
-                    <span className="mx-2">&gt</span>
+                    <span className="mx-2">&#62;</span>
                     <span>Create</span>
                 </nav>
             </div>
@@ -82,7 +82,7 @@ const CreateUserForm = ({ onSuccess, onCancel }) => {
                             value={formData.lastName}
                             onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Enter user first name"
+                            placeholder="Enter user last name"
                             disabled={loading}
                         />
                     </div>
@@ -92,7 +92,7 @@ const CreateUserForm = ({ onSuccess, onCancel }) => {
                             Email<span className="text-red-500">*</span>
                         </label>
                         <input
-                            type="text"
+                            type="email"
                             value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -106,7 +106,7 @@ const CreateUserForm = ({ onSuccess, onCancel }) => {
                             Phone<span className="text-red-500">*</span>
                         </label>
                         <input
-                            type="text"
+                            type="tel"
                             value={formData.phone}
                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -120,7 +120,7 @@ const CreateUserForm = ({ onSuccess, onCancel }) => {
                             Password<span className="text-red-500">*</span>
                         </label>
                         <input
-                            type="paswword"
+                            type="password"
                             value={formData.password}
                             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -133,14 +133,15 @@ const CreateUserForm = ({ onSuccess, onCancel }) => {
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                             Role<span className="text-red-500">*</span>
                         </label>
-                        <input
-                            type="text"
+                        <select
                             value={formData.role}
                             onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Enter user role"
                             disabled={loading}
-                        />
+                        >
+                            <option value="ADMIN">ADMIN</option>
+                            <option value="WORKER">WORKER</option>
+                        </select>
                     </div>
                 </div>
 

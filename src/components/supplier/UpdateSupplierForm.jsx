@@ -74,7 +74,7 @@ const UpdateSupplierForm = ({ supplierId, onSuccess, onCancel }) => {
                 <h1 className="text-2xl font-bold text-gray-900">Update Supplier</h1>
                 <nav className="flex mt-2 text-sm text-gray-600">
                     <span>Categories</span>
-                    <span className="mx-2">&gt;</span>
+                    <span className="mx-2">&#62;</span>
                     <span>Update</span>
                 </nav>
             </div>
