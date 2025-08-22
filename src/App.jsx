@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Infopanel from './components/Infopanel';
 import Categories from './components/category/Categories.jsx';
 import Customers from './components/customer/Customers.jsx';
+import Offers from './components/offer/Offers.jsx';
 import Suppliers from './components/supplier/Suppliers.jsx';
 import Users from './components/user/Users.jsx';
 import Sidebar from './components/Sidebar';
@@ -21,7 +22,7 @@ const App = () => {
             case 'orders':
                 return <PlaceholderView title="Orders" />;
             case 'offers':
-                return <PlaceholderView title="Offers" />;
+                return <Offers />;
             case 'suppliers':
                 return <Suppliers />;
             case 'users':
