@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Infopanel from './components/Infopanel';
 import Categories from './components/category/Categories.jsx';
 import Customers from './components/customer/Customers.jsx';
+import Orders from './components/order/Orders.jsx';
 import Offers from './components/offer/Offers.jsx';
 import Suppliers from './components/supplier/Suppliers.jsx';
 import Users from './components/user/Users.jsx';
@@ -20,7 +21,7 @@ const App = () => {
             case 'customers':
                 return <Customers />;
             case 'orders':
-                return <PlaceholderView title="Orders" />;
+                return <Orders />;
             case 'offers':
                 return <Offers />;
             case 'suppliers':
@@ -31,15 +32,6 @@ const App = () => {
                 return <Infopanel />;
         }
     };
-
-    const PlaceholderView = ({ title }) => (
-        <div className="p-8">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">{title}</h1>
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
-                <p className="text-gray-500">This section is not implemented yet.</p>
-            </div>
-        </div>
-    );
 
     return (
         <div className="flex h-screen bg-gray-100">
