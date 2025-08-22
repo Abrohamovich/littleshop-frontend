@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { userApi } from '../../services/userApi.js';
+import { sanitizeFormData } from '../../utils/sanitizeUtil.js';
 
 const CreateUserForm = ({ onSuccess, onCancel }) => {
     const [formData, setFormData] = useState({
@@ -11,15 +12,6 @@ const CreateUserForm = ({ onSuccess, onCancel }) => {
         phone: ''
     });
     const [loading, setLoading] = useState(false);
-
-    const sanitizeFormData = (data) => {
-        const sanitized = {};
-        Object.keys(data).forEach(key => {
-            const value = data[key];
-            sanitized[key] = (typeof value === 'string' && value.trim() === '') ? null : value;
-        });
-        return sanitized;
-    };
 
     const handleCreateUser = async (continueCreating = false, goBack = false) => {
         setLoading(true);

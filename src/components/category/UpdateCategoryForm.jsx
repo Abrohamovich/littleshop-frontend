@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { categoryApi } from '../../services/categoryApi.js';
+import { sanitizeFormData } from '../../utils/sanitizeUtil.js';
 
 const UpdateCategoryForm = ({ categoryId, onSuccess, onCancel }) => {
     const [formData, setFormData] = useState({
@@ -26,7 +27,6 @@ const UpdateCategoryForm = ({ categoryId, onSuccess, onCancel }) => {
                 });
             } catch (error) {
                 console.error('Error loading category:', error);
-                // Handle error - maybe show a message or go back
                 onCancel();
             } finally {
                 setInitialLoading(false);
@@ -41,7 +41,8 @@ const UpdateCategoryForm = ({ categoryId, onSuccess, onCancel }) => {
 
         setLoading(true);
         try {
-            await categoryApi.updateCategory(categoryId, formData);
+            const sanitizedData = sanitizeFormData(formData);
+            await categoryApi.updateCategory(categoryId, sanitizedData);
 
             if (goBack || !continueCreating) {
                 onSuccess();

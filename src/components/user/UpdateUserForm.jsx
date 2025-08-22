@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { userApi } from '../../services/userApi.js';
+import { sanitizeFormData } from '../../utils/sanitizeUtil.js';
 
 const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
     const [formData, setFormData] = useState({
@@ -46,7 +47,8 @@ const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
     const handleUpdateUser = async (continueCreating = false, goBack = false) => {
         setLoading(true);
         try {
-            await userApi.updateUser(userId, formData);
+            const sanitizedData = sanitizeFormData(formData);
+            await userApi.updateUser(userId, sanitizedData);
 
             if (goBack || !continueCreating) {
                 onSuccess();

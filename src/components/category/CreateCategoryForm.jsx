@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { categoryApi } from '../../services/categoryApi.js';
+import { sanitizeFormData } from '../../utils/sanitizeUtil.js';
 
 const CreateCategoryForm = ({ onSuccess, onCancel }) => {
     const [formData, setFormData] = useState({
@@ -13,7 +14,8 @@ const CreateCategoryForm = ({ onSuccess, onCancel }) => {
 
         setLoading(true);
         try {
-            await categoryApi.createCategory(formData);
+            const sanitizedData = sanitizeFormData(formData);
+            await categoryApi.createCategory(sanitizedData);
             setFormData({ name: '', description: '' });
 
             if (goBack || !continueCreating) {

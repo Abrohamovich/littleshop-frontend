@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { supplierApi } from '../../services/supplierApi.js';
+import { sanitizeFormData } from '../../utils/sanitizeUtil.js';
 
 const CreateSupplierForm = ({ onSuccess, onCancel }) => {
     const [formData, setFormData] = useState({
@@ -10,15 +11,6 @@ const CreateSupplierForm = ({ onSuccess, onCancel }) => {
         description: '',
     });
     const [loading, setLoading] = useState(false);
-
-    const sanitizeFormData = (data) => {
-        const sanitized = {};
-        Object.keys(data).forEach(key => {
-            const value = data[key];
-            sanitized[key] = (typeof value === 'string' && value.trim() === '') ? null : value;
-        });
-        return sanitized;
-    };
 
     const handleCreateSupplier = async (continueCreating = false, goBack = false) => {
         setLoading(true);
