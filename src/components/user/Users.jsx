@@ -5,6 +5,8 @@ import UsersTable from './UsersTable.jsx';
 import CreateUserForm from './CreateUserForm.jsx';
 import ColumnSelector from '../ColumnSelector.jsx';
 import UpdateUserForm from "./UpdateUserForm.jsx";
+import { createColumnToggleHandler } from '../../utils/columnUtils.js';
+import {useTableManagement} from "../../hooks/useTableManagement.js";
 
 const AVAILABLE_COLUMNS = [
     { key: 'id', label: 'ID', type: 'number' },
@@ -18,19 +20,53 @@ const AVAILABLE_COLUMNS = [
 ];
 
 const Users = () => {
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [searchField] = useState('firstName');
-    const [currentPage, setCurrentPage] = useState(0);
-    const [totalPages, setTotalPages] = useState(0);
-    const [totalElements, setTotalElements] = useState(0);
-    const [pageSize, setPageSize] = useState(10);
-    const [showCreateForm, setShowCreateForm] = useState(false);
-    const [showUpdateForm, setShowUpdateForm] = useState(false);
-    const [selectedUserId, setSelectedUserId] = useState(null);
-    const [visibleColumns, setVisibleColumns] = useState(['firstName', 'lastName', 'email', 'role']);
-    const [showColumnSelector, setShowColumnSelector] = useState(false);
+    const {
+        // Data state
+        items: users,
+        setItems: setUsers,
+        loading,
+        setLoading,
+
+        // Search state
+        searchTerm,
+        searchField,
+        handleSearch,
+
+        // Pagination state
+        currentPage,
+        setCurrentPage,
+        totalPages,
+        setTotalPages,
+        totalElements,
+        setTotalElements,
+        pageSize,
+        setPageSize,
+
+        // Form state
+        showCreateForm,
+        setShowCreateForm,
+        showUpdateForm,
+        selectedItemId: selectedUserId,
+
+        // Column visibility state
+        visibleColumns,
+        setVisibleColumns,
+        showColumnSelector,
+        setShowColumnSelector,
+
+        // Handlers
+        handleCreateSuccess: onCreateSuccess,
+        handleUpdateSuccess: onUpdateSuccess,
+        handleUpdate,
+        handleCancelCreate,
+        handleCancelUpdate
+    } = useTableManagement({
+        defaultSearchField: 'firstName',
+        defaultVisibleColumns: ['firstName', 'lastName', 'email', 'role'],
+        defaultPageSize: 10
+    });
+
+    const toggleColumn = createColumnToggleHandler(visibleColumns, setVisibleColumns, AVAILABLE_COLUMNS);
 
     const loadUsers = useCallback(async () => {
         setLoading(true);
@@ -50,16 +86,11 @@ const Users = () => {
         } finally {
             setLoading(false);
         }
-    }, [currentPage, pageSize, searchTerm, searchField]);
+    }, [currentPage, pageSize, searchTerm, searchField, setLoading, setUsers, setTotalPages, setTotalElements]);
 
     useEffect(() => {
         loadUsers();
     }, [loadUsers]);
-
-    const handleSearch = (e) => {
-        setSearchTerm(e.target.value);
-        setCurrentPage(0);
-    };
 
     const handleDeleteUser = async (id) => {
         if (window.confirm('Are you sure you want to delete this user?')) {
@@ -73,31 +104,16 @@ const Users = () => {
     };
 
     const handleUpdateUser = (userId) => {
-        setSelectedUserId(userId);
-        setShowUpdateForm(true);
-    };
-
-    const handleUpdateSuccess = () => {
-        setShowUpdateForm(false);
-        setSelectedUserId(null);
-        loadUsers();
-    };
-
-    const toggleColumn = (columnKey) => {
-        if (visibleColumns.includes(columnKey)) {
-            if (visibleColumns.length > 1) {
-                setVisibleColumns(visibleColumns.filter(col => col !== columnKey));
-            }
-        } else {
-            const newColumns = AVAILABLE_COLUMNS
-                .filter(col => visibleColumns.includes(col.key) || col.key === columnKey)
-                .map(col => col.key);
-            setVisibleColumns(newColumns);
-        }
+        handleUpdate(userId)
     };
 
     const handleCreateSuccess = () => {
-        setShowCreateForm(false);
+        onCreateSuccess()
+        loadUsers();
+    };
+
+    const handleUpdateSuccess = () => {
+        onUpdateSuccess()
         loadUsers();
     };
 
@@ -105,7 +121,7 @@ const Users = () => {
         return (
             <CreateUserForm
                 onSuccess={handleCreateSuccess}
-                onCancel={() => setShowCreateForm(false)}
+                onCancel={handleCancelCreate}
             />
         );
     }
@@ -115,10 +131,7 @@ const Users = () => {
             <UpdateUserForm
                 userId={selectedUserId}
                 onSuccess={handleUpdateSuccess}
-                onCancel={() => {
-                    setShowUpdateForm(false);
-                    setSelectedUserId(null);
-                }}
+                onCancel={handleCancelUpdate}
             />
         );
     }

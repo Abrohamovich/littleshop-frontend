@@ -5,6 +5,8 @@ import CategoriesTable from './CategoriesTable.jsx';
 import CreateCategoryForm from './CreateCategoryForm.jsx';
 import ColumnSelector from '../ColumnSelector.jsx';
 import UpdateCategoryForm from "./UpdateCategoryForm.jsx";
+import { createColumnToggleHandler } from '../../utils/columnUtils.js';
+import {useTableManagement} from "../../hooks/useTableManagement.js";
 
 const AVAILABLE_COLUMNS = [
     { key: 'id', label: 'ID', type: 'number' },
@@ -15,19 +17,53 @@ const AVAILABLE_COLUMNS = [
 ];
 
 const Categories = () => {
-    const [categories, setCategories] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [searchField] = useState('name');
-    const [currentPage, setCurrentPage] = useState(0);
-    const [totalPages, setTotalPages] = useState(0);
-    const [totalElements, setTotalElements] = useState(0);
-    const [pageSize, setPageSize] = useState(10);
-    const [showCreateForm, setShowCreateForm] = useState(false);
-    const [showUpdateForm, setShowUpdateForm] = useState(false);
-    const [selectedCategoryId, setSelectedCategoryId] = useState(null);
-    const [visibleColumns, setVisibleColumns] = useState(['name', 'description']);
-    const [showColumnSelector, setShowColumnSelector] = useState(false);
+    const {
+        // Data state
+        items: categories,
+        setItems: setCategories,
+        loading,
+        setLoading,
+
+        // Search state
+        searchTerm,
+        searchField,
+        handleSearch,
+
+        // Pagination state
+        currentPage,
+        setCurrentPage,
+        totalPages,
+        setTotalPages,
+        totalElements,
+        setTotalElements,
+        pageSize,
+        setPageSize,
+
+        // Form state
+        showCreateForm,
+        setShowCreateForm,
+        showUpdateForm,
+        selectedItemId: selectedCategoryId,
+
+        // Column visibility state
+        visibleColumns,
+        setVisibleColumns,
+        showColumnSelector,
+        setShowColumnSelector,
+
+        // Handlers
+        handleCreateSuccess: onCreateSuccess,
+        handleUpdateSuccess: onUpdateSuccess,
+        handleUpdate,
+        handleCancelCreate,
+        handleCancelUpdate
+    } = useTableManagement({
+        defaultSearchField: 'name',
+        defaultVisibleColumns: ['name', 'description'],
+        defaultPageSize: 10
+    });
+
+    const toggleColumn = createColumnToggleHandler(visibleColumns, setVisibleColumns, AVAILABLE_COLUMNS);
 
     const loadCategories = useCallback(async () => {
         setLoading(true);
@@ -46,16 +82,11 @@ const Categories = () => {
         } finally {
             setLoading(false);
         }
-    }, [currentPage, pageSize, searchTerm, searchField]);
+    }, [currentPage, pageSize, searchTerm, searchField, setLoading, setCategories, setTotalPages, setTotalElements]);
 
     useEffect(() => {
         loadCategories();
     }, [loadCategories]);
-
-    const handleSearch = (e) => {
-        setSearchTerm(e.target.value);
-        setCurrentPage(0);
-    };
 
     const handleDeleteCategory = async (id) => {
         if (window.confirm('Are you sure you want to delete this category?')) {
@@ -69,31 +100,16 @@ const Categories = () => {
     };
 
     const handleUpdateCategory = (categoryId) => {
-        setSelectedCategoryId(categoryId);
-        setShowUpdateForm(true);
-    };
-
-    const handleUpdateSuccess = () => {
-        setShowUpdateForm(false);
-        setSelectedCategoryId(null);
-        loadCategories();
-    };
-
-    const toggleColumn = (columnKey) => {
-        if (visibleColumns.includes(columnKey)) {
-            if (visibleColumns.length > 1) {
-                setVisibleColumns(visibleColumns.filter(col => col !== columnKey));
-            }
-        } else {
-            const newColumns = AVAILABLE_COLUMNS
-                .filter(col => visibleColumns.includes(col.key) || col.key === columnKey)
-                .map(col => col.key);
-            setVisibleColumns(newColumns);
-        }
+        handleUpdate(categoryId)
     };
 
     const handleCreateSuccess = () => {
-        setShowCreateForm(false);
+        onCreateSuccess()
+        loadCategories();
+    };
+
+    const handleUpdateSuccess = () => {
+        onUpdateSuccess();
         loadCategories();
     };
 
@@ -101,7 +117,7 @@ const Categories = () => {
         return (
             <CreateCategoryForm
                 onSuccess={handleCreateSuccess}
-                onCancel={() => setShowCreateForm(false)}
+                onCancel={handleCancelCreate}
             />
         );
     }
@@ -111,10 +127,7 @@ const Categories = () => {
             <UpdateCategoryForm
                 categoryId={selectedCategoryId}
                 onSuccess={handleUpdateSuccess}
-                onCancel={() => {
-                    setShowUpdateForm(false);
-                    setSelectedCategoryId(null);
-                }}
+                onCancel={handleCancelUpdate}
             />
         );
     }

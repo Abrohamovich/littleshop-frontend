@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Search, Plus, MoreVertical, Eye, ChevronDown } from 'lucide-react';
+import React, { useEffect, useCallback } from 'react';
+import { Search, Plus } from 'lucide-react';
 import { supplierApi } from '../../services/supplierApi.js';
 import SuppliersTable from './SuppliersTable.jsx';
 import CreateSupplierForm from './CreateSupplierForm.jsx';
 import ColumnSelector from '../ColumnSelector.jsx';
 import UpdateSupplierForm from "./UpdateSupplierForm.jsx";
+import { createColumnToggleHandler } from '../../utils/columnUtils.js';
+import { useTableManagement } from '../../hooks/useTableManagement.js';
 
 const AVAILABLE_COLUMNS = [
     { key: 'id', label: 'ID', type: 'number' },
@@ -18,19 +20,53 @@ const AVAILABLE_COLUMNS = [
 ];
 
 const Suppliers = () => {
-    const [suppliers, setSuppliers] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [searchField] = useState('name');
-    const [currentPage, setCurrentPage] = useState(0);
-    const [totalPages, setTotalPages] = useState(0);
-    const [totalElements, setTotalElements] = useState(0);
-    const [pageSize, setPageSize] = useState(10);
-    const [showCreateForm, setShowCreateForm] = useState(false);
-    const [showUpdateForm, setShowUpdateForm] = useState(false);
-    const [selectedSupplierId, setSelectedSupplierId] = useState(null);
-    const [visibleColumns, setVisibleColumns] = useState(['name', 'email', 'phone']);
-    const [showColumnSelector, setShowColumnSelector] = useState(false);
+    const {
+        // Data state
+        items: suppliers,
+        setItems: setSuppliers,
+        loading,
+        setLoading,
+
+        // Search state
+        searchTerm,
+        searchField,
+        handleSearch,
+
+        // Pagination state
+        currentPage,
+        setCurrentPage,
+        totalPages,
+        setTotalPages,
+        totalElements,
+        setTotalElements,
+        pageSize,
+        setPageSize,
+
+        // Form state
+        showCreateForm,
+        setShowCreateForm,
+        showUpdateForm,
+        selectedItemId: selectedSupplierId,
+
+        // Column visibility state
+        visibleColumns,
+        setVisibleColumns,
+        showColumnSelector,
+        setShowColumnSelector,
+
+        // Handlers
+        handleCreateSuccess: onCreateSuccess,
+        handleUpdateSuccess: onUpdateSuccess,
+        handleUpdate,
+        handleCancelCreate,
+        handleCancelUpdate
+    } = useTableManagement({
+        defaultSearchField: 'name',
+        defaultVisibleColumns: ['name', 'email', 'phone'],
+        defaultPageSize: 10
+    });
+
+    const toggleColumn = createColumnToggleHandler(visibleColumns, setVisibleColumns, AVAILABLE_COLUMNS);
 
     const loadSuppliers = useCallback(async () => {
         setLoading(true);
@@ -50,16 +86,11 @@ const Suppliers = () => {
         } finally {
             setLoading(false);
         }
-    }, [currentPage, pageSize, searchTerm, searchField]);
+    }, [currentPage, pageSize, searchTerm, searchField, setLoading, setSuppliers, setTotalPages, setTotalElements]);
 
     useEffect(() => {
         loadSuppliers();
     }, [loadSuppliers]);
-
-    const handleSearch = (e) => {
-        setSearchTerm(e.target.value);
-        setCurrentPage(0);
-    };
 
     const handleDeleteSupplier = async (id) => {
         if (window.confirm('Are you sure you want to delete this supplier?')) {
@@ -73,31 +104,16 @@ const Suppliers = () => {
     };
 
     const handleUpdateSupplier = (supplierId) => {
-        setSelectedSupplierId(supplierId);
-        setShowUpdateForm(true);
-    };
-
-    const handleUpdateSuccess = () => {
-        setShowUpdateForm(false);
-        setSelectedSupplierId(null);
-        loadSuppliers();
-    };
-
-    const toggleColumn = (columnKey) => {
-        if (visibleColumns.includes(columnKey)) {
-            if (visibleColumns.length > 1) {
-                setVisibleColumns(visibleColumns.filter(col => col !== columnKey));
-            }
-        } else {
-            const newColumns = AVAILABLE_COLUMNS
-                .filter(col => visibleColumns.includes(col.key) || col.key === columnKey)
-                .map(col => col.key);
-            setVisibleColumns(newColumns);
-        }
+        handleUpdate(supplierId);
     };
 
     const handleCreateSuccess = () => {
-        setShowCreateForm(false);
+        onCreateSuccess();
+        loadSuppliers();
+    };
+
+    const handleUpdateSuccess = () => {
+        onUpdateSuccess();
         loadSuppliers();
     };
 
@@ -105,7 +121,7 @@ const Suppliers = () => {
         return (
             <CreateSupplierForm
                 onSuccess={handleCreateSuccess}
-                onCancel={() => setShowCreateForm(false)}
+                onCancel={handleCancelCreate}
             />
         );
     }
@@ -115,10 +131,7 @@ const Suppliers = () => {
             <UpdateSupplierForm
                 supplierId={selectedSupplierId}
                 onSuccess={handleUpdateSuccess}
-                onCancel={() => {
-                    setShowUpdateForm(false);
-                    setSelectedSupplierId(null);
-                }}
+                onCancel={handleCancelUpdate}
             />
         );
     }

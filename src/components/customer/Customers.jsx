@@ -5,6 +5,8 @@ import CustomersTable from './CustomersTable.jsx';
 import CreateCustomerForm from './CreateCustomerForm.jsx';
 import ColumnSelector from '../ColumnSelector.jsx';
 import UpdateCustomerForm from "./UpdateCustomerForm.jsx";
+import { createColumnToggleHandler } from '../../utils/columnUtils.js';
+import {useTableManagement} from "../../hooks/useTableManagement.js";
 
 const AVAILABLE_COLUMNS = [
     { key: 'id', label: 'ID', type: 'number' },
@@ -18,19 +20,53 @@ const AVAILABLE_COLUMNS = [
 ];
 
 const Customers = () => {
-    const [customers, setCustomers] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [searchField] = useState('firstName');
-    const [currentPage, setCurrentPage] = useState(0);
-    const [totalPages, setTotalPages] = useState(0);
-    const [totalElements, setTotalElements] = useState(0);
-    const [pageSize, setPageSize] = useState(10);
-    const [showCreateForm, setShowCreateForm] = useState(false);
-    const [showUpdateForm, setShowUpdateForm] = useState(false);
-    const [selectedCustomerId, setSelectedCustomerId] = useState(null);
-    const [visibleColumns, setVisibleColumns] = useState(['firstName', 'lastName', 'email', 'phone']);
-    const [showColumnSelector, setShowColumnSelector] = useState(false);
+    const {
+        // Data state
+        items: customers,
+        setItems: setCustomers,
+        loading,
+        setLoading,
+
+        // Search state
+        searchTerm,
+        searchField,
+        handleSearch,
+
+        // Pagination state
+        currentPage,
+        setCurrentPage,
+        totalPages,
+        setTotalPages,
+        totalElements,
+        setTotalElements,
+        pageSize,
+        setPageSize,
+
+        // Form state
+        showCreateForm,
+        setShowCreateForm,
+        showUpdateForm,
+        selectedItemId: selectedCustomerId,
+
+        // Column visibility state
+        visibleColumns,
+        setVisibleColumns,
+        showColumnSelector,
+        setShowColumnSelector,
+
+        // Handlers
+        handleCreateSuccess: onCreateSuccess,
+        handleUpdateSuccess: onUpdateSuccess,
+        handleUpdate,
+        handleCancelCreate,
+        handleCancelUpdate
+    } = useTableManagement({
+        defaultSearchField: 'firstName',
+        defaultVisibleColumns: ['firstName', 'lastName', 'email', 'phone'],
+        defaultPageSize: 10
+    });
+
+    const toggleColumn = createColumnToggleHandler(visibleColumns, setVisibleColumns, AVAILABLE_COLUMNS);
 
     const loadCustomers = useCallback(async () => {
         setLoading(true);
@@ -50,16 +86,11 @@ const Customers = () => {
         } finally {
             setLoading(false);
         }
-    }, [currentPage, pageSize, searchTerm, searchField]);
+    }, [currentPage, pageSize, searchTerm, searchField, setLoading, setCustomers, setTotalPages, setTotalElements]);
 
     useEffect(() => {
         loadCustomers();
     }, [loadCustomers]);
-
-    const handleSearch = (e) => {
-        setSearchTerm(e.target.value);
-        setCurrentPage(0);
-    };
 
     const handleDeleteCustomer = async (id) => {
         if (window.confirm('Are you sure you want to delete this customer?')) {
@@ -73,31 +104,16 @@ const Customers = () => {
     };
 
     const handleUpdateCustomer = (customerId) => {
-        setSelectedCustomerId(customerId);
-        setShowUpdateForm(true);
-    };
-
-    const handleUpdateSuccess = () => {
-        setShowUpdateForm(false);
-        setSelectedCustomerId(null);
-        loadCustomers();
-    };
-
-    const toggleColumn = (columnKey) => {
-        if (visibleColumns.includes(columnKey)) {
-            if (visibleColumns.length > 1) {
-                setVisibleColumns(visibleColumns.filter(col => col !== columnKey));
-            }
-        } else {
-            const newColumns = AVAILABLE_COLUMNS
-                .filter(col => visibleColumns.includes(col.key) || col.key === columnKey)
-                .map(col => col.key);
-            setVisibleColumns(newColumns);
-        }
+        handleUpdate(customerId)
     };
 
     const handleCreateSuccess = () => {
-        setShowCreateForm(false);
+        onCreateSuccess()
+        loadCustomers();
+    };
+
+    const handleUpdateSuccess = () => {
+        onUpdateSuccess();
         loadCustomers();
     };
 
@@ -105,7 +121,7 @@ const Customers = () => {
         return (
             <CreateCustomerForm
                 onSuccess={handleCreateSuccess}
-                onCancel={() => setShowCreateForm(false)}
+                onCancel={handleCancelCreate}
             />
         );
     }
@@ -115,10 +131,7 @@ const Customers = () => {
             <UpdateCustomerForm
                 customerId={selectedCustomerId}
                 onSuccess={handleUpdateSuccess}
-                onCancel={() => {
-                    setShowUpdateForm(false);
-                    setSelectedCustomerId(null);
-                }}
+                onCancel={handleCancelUpdate}
             />
         );
     }

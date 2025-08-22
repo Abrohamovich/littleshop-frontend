@@ -7,6 +7,8 @@ import OrdersTable from './OrdersTable.jsx';
 import CreateOrderForm from './CreateOrderForm.jsx';
 import UpdateOrderForm from './UpdateOrderForm.jsx';
 import ColumnSelector from '../ColumnSelector.jsx';
+import { createColumnToggleHandler } from '../../utils/columnUtils.js';
+import { useTableManagement } from "../../hooks/useTableManagement.js";
 
 const AVAILABLE_COLUMNS = [
     { key: 'id', label: 'ID', type: 'number' },
@@ -20,17 +22,47 @@ const AVAILABLE_COLUMNS = [
 ];
 
 const Orders = () => {
-    const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [currentPage, setCurrentPage] = useState(0);
-    const [totalPages, setTotalPages] = useState(0);
-    const [totalElements, setTotalElements] = useState(0);
-    const [pageSize, setPageSize] = useState(10);
-    const [showCreateForm, setShowCreateForm] = useState(false);
-    const [showUpdateForm, setShowUpdateForm] = useState(false);
-    const [selectedOrderId, setSelectedOrderId] = useState(null);
-    const [visibleColumns, setVisibleColumns] = useState(['id', 'customer', 'user', 'status', 'itemsCount', 'totalAmount']);
-    const [showColumnSelector, setShowColumnSelector] = useState(false);
+    const {
+        // Data state
+        items: orders,
+        setItems: setOrders,
+        loading,
+        setLoading,
+
+        // Pagination state
+        currentPage,
+        setCurrentPage,
+        totalPages,
+        setTotalPages,
+        totalElements,
+        setTotalElements,
+        pageSize,
+        setPageSize,
+        resetToFirstPage,
+
+        // Form state
+        showCreateForm,
+        setShowCreateForm,
+        showUpdateForm,
+        selectedItemId: selectedOrderId,
+
+        // Column visibility state
+        visibleColumns,
+        setVisibleColumns,
+        showColumnSelector,
+        setShowColumnSelector,
+
+        // Handlers
+        handleCreateSuccess: onCreateSuccess,
+        handleUpdateSuccess: onUpdateSuccess,
+        handleUpdate,
+        handleCancelCreate,
+        handleCancelUpdate
+    } = useTableManagement({
+        defaultSearchField: '',
+        defaultVisibleColumns: ['id', 'customer', 'user', 'status', 'itemsCount', 'totalAmount'],
+        defaultPageSize: 10
+    });
 
     const [filters, setFilters] = useState({
         customerId: '',
@@ -39,6 +71,8 @@ const Orders = () => {
     const [showFilters, setShowFilters] = useState(false);
     const [customers, setCustomers] = useState([]);
     const [users, setUsers] = useState([]);
+
+    const toggleColumn = createColumnToggleHandler(visibleColumns, setVisibleColumns, AVAILABLE_COLUMNS);
 
     useEffect(() => {
         const loadFilterData = async () => {
@@ -75,7 +109,7 @@ const Orders = () => {
         } finally {
             setLoading(false);
         }
-    }, [currentPage, pageSize, filters]);
+    }, [currentPage, pageSize, filters, setLoading, setOrders, setTotalPages, setTotalElements]);
 
     useEffect(() => {
         loadOrders();
@@ -83,12 +117,12 @@ const Orders = () => {
 
     const handleFilterChange = (filterKey, value) => {
         setFilters(prev => ({ ...prev, [filterKey]: value }));
-        setCurrentPage(0);
+        resetToFirstPage();
     };
 
     const clearFilters = () => {
         setFilters({ customerId: '', userId: '' });
-        setCurrentPage(0);
+        resetToFirstPage();
     };
 
     const handleDeleteOrder = async (id) => {
@@ -103,31 +137,16 @@ const Orders = () => {
     };
 
     const handleUpdateOrder = (orderId) => {
-        setSelectedOrderId(orderId);
-        setShowUpdateForm(true);
-    };
-
-    const handleUpdateSuccess = () => {
-        setShowUpdateForm(false);
-        setSelectedOrderId(null);
-        loadOrders();
-    };
-
-    const toggleColumn = (columnKey) => {
-        if (visibleColumns.includes(columnKey)) {
-            if (visibleColumns.length > 1) {
-                setVisibleColumns(visibleColumns.filter(col => col !== columnKey));
-            }
-        } else {
-            const newColumns = AVAILABLE_COLUMNS
-                .filter(col => visibleColumns.includes(col.key) || col.key === columnKey)
-                .map(col => col.key);
-            setVisibleColumns(newColumns);
-        }
+        handleUpdate(orderId);
     };
 
     const handleCreateSuccess = () => {
-        setShowCreateForm(false);
+        onCreateSuccess();
+        loadOrders();
+    };
+
+    const handleUpdateSuccess = () => {
+        onUpdateSuccess();
         loadOrders();
     };
 
@@ -135,7 +154,7 @@ const Orders = () => {
         return (
             <CreateOrderForm
                 onSuccess={handleCreateSuccess}
-                onCancel={() => setShowCreateForm(false)}
+                onCancel={handleCancelCreate}
             />
         );
     }
@@ -145,10 +164,7 @@ const Orders = () => {
             <UpdateOrderForm
                 orderId={selectedOrderId}
                 onSuccess={handleUpdateSuccess}
-                onCancel={() => {
-                    setShowUpdateForm(false);
-                    setSelectedOrderId(null);
-                }}
+                onCancel={handleCancelUpdate}
             />
         );
     }
