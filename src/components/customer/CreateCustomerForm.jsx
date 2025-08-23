@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { customerApi } from '../../services/customerApi.js';
+import { sanitizeFormData } from '../../utils/sanitizeUtil.js';
 
 const CreateCustomerForm = ({ onSuccess, onCancel }) => {
     const [formData, setFormData] = useState({
@@ -10,15 +11,6 @@ const CreateCustomerForm = ({ onSuccess, onCancel }) => {
         address: ''
     });
     const [loading, setLoading] = useState(false);
-
-    const sanitizeFormData = (data) => {
-        const sanitized = {};
-        Object.keys(data).forEach(key => {
-            const value = data[key];
-            sanitized[key] = (typeof value === 'string' && value.trim() === '') ? null : value;
-        });
-        return sanitized;
-    };
 
     const handleCreateCustomer = async (continueCreating = false, goBack = false) => {
         setLoading(true);
@@ -50,7 +42,7 @@ const CreateCustomerForm = ({ onSuccess, onCancel }) => {
                 <h1 className="text-2xl font-bold text-gray-900">Create Customer</h1>
                 <nav className="flex mt-2 text-sm text-gray-600">
                     <span>Categories</span>
-                    <span className="mx-2">&gt</span>
+                    <span className="mx-2">&#62;</span>
                     <span>Create</span>
                 </nav>
             </div>

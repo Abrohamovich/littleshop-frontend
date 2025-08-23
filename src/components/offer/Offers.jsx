@@ -1,29 +1,30 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Plus, MoreVertical, Eye, ChevronDown } from 'lucide-react';
-import { userApi } from '../../services/userApi.js';
-import UsersTable from './UsersTable.jsx';
-import CreateUserForm from './CreateUserForm.jsx';
+import { offerApi } from '../../services/offerApi.js';
+import OffersTable from './OffersTable.jsx';
+import CreateOfferForm from './CreateOfferForm.jsx';
 import ColumnSelector from '../ColumnSelector.jsx';
-import UpdateUserForm from "./UpdateUserForm.jsx";
+import UpdateOfferForm from "./UpdateOfferForm.jsx";
 import { createColumnToggleHandler } from '../../utils/columnUtils.js';
 import {useTableManagement} from "../../hooks/useTableManagement.js";
 
 const AVAILABLE_COLUMNS = [
     { key: 'id', label: 'ID', type: 'number' },
-    { key: 'firstName', label: 'First Name', type: 'text' },
-    { key: 'lastName', label: 'Last Name', type: 'text' },
-    { key: 'email', label: 'Email', type: 'text' },
-    { key: 'role', label: 'Role', type: 'text' },
-    { key: 'phone', label: 'Phone', type: 'text' },
+    { key: 'name', label: 'Name', type: 'text' },
+    { key: 'price', label: 'Price', type: 'number' },
+    { key: 'type', label: 'Type', type: 'text' },
+    { key: 'category', label: 'Category', type: 'text' },
+    { key: 'supplier', label: 'Supplier', type: 'text' },
+    { key: 'description', label: 'Description', type: 'text' },
     { key: 'createdAt', label: 'Created At', type: 'date' },
     { key: 'updatedAt', label: 'Updated At', type: 'date' }
 ];
 
-const Users = () => {
+const Offers = () => {
     const {
         // Data state
-        items: users,
-        setItems: setUsers,
+        items: offers,
+        setItems: setOffers,
         loading,
         setLoading,
 
@@ -46,7 +47,7 @@ const Users = () => {
         showCreateForm,
         setShowCreateForm,
         showUpdateForm,
-        selectedItemId: selectedUserId,
+        selectedItemId: selectedOfferId,
 
         // Column visibility state
         visibleColumns,
@@ -61,65 +62,63 @@ const Users = () => {
         handleCancelCreate,
         handleCancelUpdate
     } = useTableManagement({
-        defaultSearchField: 'firstName',
-        defaultVisibleColumns: ['firstName', 'lastName', 'email', 'role'],
+        defaultSearchField: 'name',
+        defaultVisibleColumns: ['name', 'price', 'type', 'category', 'supplier'],
         defaultPageSize: 10
     });
 
     const toggleColumn = createColumnToggleHandler(visibleColumns, setVisibleColumns, AVAILABLE_COLUMNS);
 
-    const loadUsers = useCallback(async () => {
+    const loadOffers = useCallback(async () => {
         setLoading(true);
         try {
             const searchParams = {};
-            if (searchTerm && searchField === 'firstName') searchParams.firstName = searchTerm;
-            if (searchTerm && searchField === 'lastName') searchParams.lastName = searchTerm;
-            if (searchTerm && searchField === 'email') searchParams.email = searchTerm;
+            if (searchTerm && searchField === 'name') searchParams.name = searchTerm;
 
-            const response = await userApi.getUsers(currentPage, pageSize, searchParams.firstName, searchParams.lastName, searchParams.email);
-            setUsers(Array.isArray(response.content) ? response.content : []);
+            const response = await offerApi.getOffers(currentPage, pageSize, searchParams.name);
+            setOffers(Array.isArray(response.content) ? response.content : []);
             setTotalPages(response.totalPages || 0);
             setTotalElements(response.totalElements || 0);
         } catch (error) {
-            console.error('Error loading users:', error);
-            setUsers([]);
+            console.error('Error loading offers:', error);
+            setOffers([]);
         } finally {
             setLoading(false);
         }
-    }, [currentPage, pageSize, searchTerm, searchField, setLoading, setUsers, setTotalPages, setTotalElements]);
+    }, [currentPage, pageSize, searchTerm, searchField, setLoading, setOffers, setTotalPages, setTotalElements]);
 
     useEffect(() => {
-        loadUsers();
-    }, [loadUsers]);
+        loadOffers();
+    }, [loadOffers]);
 
-    const handleDeleteUser = async (id) => {
-        if (window.confirm('Are you sure you want to delete this user?')) {
+    const handleDeleteOffer = async (id) => {
+        if (window.confirm('Are you sure you want to delete this offer?')) {
             try {
-                await userApi.deleteUser(id);
-                loadUsers();
+                await offerApi.deleteOffer(id);
+                loadOffers();
             } catch (error) {
-                console.error('Error deleting user:', error);
+                console.error('Error deleting offer:', error);
             }
         }
     };
 
-    const handleUpdateUser = (userId) => {
-        handleUpdate(userId)
+    const handleUpdateOffer = (offerId) => {
+        handleUpdate(offerId)
     };
 
     const handleCreateSuccess = () => {
-        onCreateSuccess()
-        loadUsers();
+        onCreateSuccess();
+        loadOffers();
     };
 
     const handleUpdateSuccess = () => {
-        onUpdateSuccess()
-        loadUsers();
+        onUpdateSuccess();
+        loadOffers();
     };
 
     if (showCreateForm) {
         return (
-            <CreateUserForm
+            <CreateOfferForm
                 onSuccess={handleCreateSuccess}
                 onCancel={handleCancelCreate}
             />
@@ -128,8 +127,8 @@ const Users = () => {
 
     if (showUpdateForm) {
         return (
-            <UpdateUserForm
-                userId={selectedUserId}
+            <UpdateOfferForm
+                offerId={selectedOfferId}
                 onSuccess={handleUpdateSuccess}
                 onCancel={handleCancelUpdate}
             />
@@ -139,7 +138,7 @@ const Users = () => {
     return (
         <div className="p-8">
             <div className="mb-6">
-                <h1 className="text-2xl font-bold text-gray-900">Users</h1>
+                <h1 className="text-2xl font-bold text-gray-900">Offers</h1>
             </div>
 
             <div className="bg-white rounded-lg shadow-sm border border-gray-200">
@@ -150,7 +149,7 @@ const Users = () => {
                                 <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                                 <input
                                     type="text"
-                                    placeholder="Search users..."
+                                    placeholder="Search offers..."
                                     value={searchTerm}
                                     onChange={handleSearch}
                                     className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -174,13 +173,13 @@ const Users = () => {
                     </div>
                 </div>
 
-                <UsersTable
-                    users={users}
+                <OffersTable
+                    offers={offers}
                     loading={loading}
                     visibleColumns={visibleColumns}
                     availableColumns={AVAILABLE_COLUMNS}
-                    onDeleteUser={handleDeleteUser}
-                    onUpdateUser={handleUpdateUser}
+                    onDeleteOffer={handleDeleteOffer}
+                    onUpdateOffer={handleUpdateOffer}
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     pageSize={pageSize}
@@ -200,4 +199,4 @@ const Users = () => {
     );
 };
 
-export default Users;
+export default Offers;

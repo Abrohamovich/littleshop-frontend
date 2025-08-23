@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { categoryApi } from '../../services/categoryApi.js';
+import { sanitizeFormData } from '../../utils/sanitizeUtil.js';
 
 const CreateCategoryForm = ({ onSuccess, onCancel }) => {
     const [formData, setFormData] = useState({
@@ -13,7 +14,8 @@ const CreateCategoryForm = ({ onSuccess, onCancel }) => {
 
         setLoading(true);
         try {
-            await categoryApi.createCategory(formData);
+            const sanitizedData = sanitizeFormData(formData);
+            await categoryApi.createCategory(sanitizedData);
             setFormData({ name: '', description: '' });
 
             if (goBack || !continueCreating) {
@@ -32,7 +34,7 @@ const CreateCategoryForm = ({ onSuccess, onCancel }) => {
                 <h1 className="text-2xl font-bold text-gray-900">Create Category</h1>
                 <nav className="flex mt-2 text-sm text-gray-600">
                     <span>Categories</span>
-                    <span className="mx-2">&gt</span>
+                    <span className="mx-2">&#62;</span>
                     <span>Create</span>
                 </nav>
             </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supplierApi } from '../../services/supplierApi.js';
+import { sanitizeFormData } from '../../utils/sanitizeUtil.js';
 
 const UpdateSupplierForm = ({ supplierId, onSuccess, onCancel }) => {
     const [formData, setFormData] = useState({
@@ -45,7 +46,8 @@ const UpdateSupplierForm = ({ supplierId, onSuccess, onCancel }) => {
     const handleUpdateSupplier = async (continueCreating = false, goBack = false) => {
         setLoading(true);
         try {
-            await supplierApi.updateSupplier(supplierId, formData);
+            const sanitizedData = sanitizeFormData(formData);
+            await supplierApi.updateSupplier(supplierId, sanitizedData);
 
             if (goBack || !continueCreating) {
                 onSuccess();
@@ -74,7 +76,7 @@ const UpdateSupplierForm = ({ supplierId, onSuccess, onCancel }) => {
                 <h1 className="text-2xl font-bold text-gray-900">Update Supplier</h1>
                 <nav className="flex mt-2 text-sm text-gray-600">
                     <span>Categories</span>
-                    <span className="mx-2">&gt;</span>
+                    <span className="mx-2">&#62;</span>
                     <span>Update</span>
                 </nav>
             </div>
