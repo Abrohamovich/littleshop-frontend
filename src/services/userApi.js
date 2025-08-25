@@ -1,3 +1,5 @@
+import {handleResponse} from "../utils/errorUtil.js";
+
 export const userApi = {
     async getUsers(page = 0, size = 10, firstName = '', lastName = '', email = '') {
         const params = new URLSearchParams({
@@ -15,11 +17,7 @@ export const userApi = {
             },
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     },
 
     async createUser(data) {
@@ -31,11 +29,7 @@ export const userApi = {
             body: JSON.stringify(data)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     },
 
     async deleteUser(id) {
@@ -43,9 +37,7 @@ export const userApi = {
             method: 'DELETE'
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        return handleResponse(response);
     },
 
     async getUserById(id) {
@@ -56,11 +48,7 @@ export const userApi = {
             },
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     },
 
     async updateUser(id, data) {
@@ -72,10 +60,6 @@ export const userApi = {
             body: JSON.stringify(data)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     }
 };

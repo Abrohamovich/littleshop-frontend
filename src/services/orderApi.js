@@ -1,3 +1,5 @@
+import {handleResponse} from "../utils/errorUtil.js";
+
 export const orderApi = {
     async getOrders(page = 0, size = 10, customerId = null, userId = null) {
         const params = new URLSearchParams({
@@ -14,11 +16,7 @@ export const orderApi = {
             },
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     },
 
     async createOrder(data) {
@@ -30,11 +28,7 @@ export const orderApi = {
             body: JSON.stringify(data)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     },
 
     async deleteOrder(id) {
@@ -42,9 +36,7 @@ export const orderApi = {
             method: 'DELETE'
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        return handleResponse(response);
     },
 
     async getOrderById(id) {
@@ -55,11 +47,7 @@ export const orderApi = {
             },
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     },
 
     async changeCustomer(id, data) {
@@ -71,11 +59,7 @@ export const orderApi = {
             body: JSON.stringify(data)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     },
 
     async addOrderItem(id, data) {
@@ -87,11 +71,7 @@ export const orderApi = {
             body: JSON.stringify(data)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     },
 
     async changeStatus(id, data) {
@@ -103,11 +83,7 @@ export const orderApi = {
             body: JSON.stringify(data)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     },
 
     async removeOrderItem(id, data) {
@@ -119,11 +95,7 @@ export const orderApi = {
             body: JSON.stringify(data)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     },
 
     async updateOrderItemQuantity(id, data){
@@ -135,10 +107,6 @@ export const orderApi = {
             body: JSON.stringify(data)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     }
 };
