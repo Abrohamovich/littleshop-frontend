@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { customerApi } from '../../services/customerApi.js';
+import React, {useEffect, useState} from 'react';
+import {customerApi} from '../../services/customerApi.js';
 import ApiError from '../../utils/errorUtil.js';
-import { sanitizeFormData } from '../../utils/sanitizeUtil.js';
+import {sanitizeFormData} from '../../utils/sanitizeUtil.js';
 import ErrorDisplay from '../../components/ErrorDisplay.jsx';
 
-const UpdateCustomerForm = ({ customerId, onSuccess, onCancel }) => {
+const UpdateCustomerForm = ({customerId, onSuccess, onCancel}) => {
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -65,10 +65,10 @@ const UpdateCustomerForm = ({ customerId, onSuccess, onCancel }) => {
     }, [customerId]);
 
     const handleUpdateCustomer = async (continueCreating = false, goBack = false) => {
-        
+
         setLoading(true);
         setError(null);
-        
+
         try {
             const sanitizedData = sanitizeFormData(formData);
             await customerApi.updateCustomer(customerId, sanitizedData);
@@ -132,7 +132,7 @@ const UpdateCustomerForm = ({ customerId, onSuccess, onCancel }) => {
                 </div>
 
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <ErrorDisplay error={error} onDismiss={() => setError(null)} />
+                    <ErrorDisplay error={error} onDismiss={() => setError(null)}/>
 
                     <div className="flex space-x-4 mt-6">
                         <button
@@ -165,7 +165,7 @@ const UpdateCustomerForm = ({ customerId, onSuccess, onCancel }) => {
             </div>
 
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <ErrorDisplay error={error} onDismiss={() => setError(null)} />
+                <ErrorDisplay error={error} onDismiss={() => setError(null)}/>
 
                 <div className="space-y-4">
                     <div>
@@ -176,7 +176,7 @@ const UpdateCustomerForm = ({ customerId, onSuccess, onCancel }) => {
                             type="text"
                             value={formData.firstName}
                             onChange={(e) => {
-                                setFormData({ ...formData, firstName: e.target.value });
+                                setFormData({...formData, firstName: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -193,7 +193,7 @@ const UpdateCustomerForm = ({ customerId, onSuccess, onCancel }) => {
                             type="text"
                             value={formData.lastName}
                             onChange={(e) => {
-                                setFormData({ ...formData, lastName: e.target.value });
+                                setFormData({...formData, lastName: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -210,7 +210,7 @@ const UpdateCustomerForm = ({ customerId, onSuccess, onCancel }) => {
                             type="email"
                             value={formData.email}
                             onChange={(e) => {
-                                setFormData({ ...formData, email: e.target.value });
+                                setFormData({...formData, email: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -227,7 +227,7 @@ const UpdateCustomerForm = ({ customerId, onSuccess, onCancel }) => {
                             type="tel"
                             value={formData.phone}
                             onChange={(e) => {
-                                setFormData({ ...formData, phone: e.target.value });
+                                setFormData({...formData, phone: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -243,7 +243,7 @@ const UpdateCustomerForm = ({ customerId, onSuccess, onCancel }) => {
                         <textarea
                             value={formData.address}
                             onChange={(e) => {
-                                setFormData({ ...formData, address: e.target.value });
+                                setFormData({...formData, address: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"

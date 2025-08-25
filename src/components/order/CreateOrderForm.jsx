@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Trash2 } from 'lucide-react';
-import { orderApi } from '../../services/orderApi.js';
-import { customerApi } from '../../services/customerApi.js';
-import { userApi } from '../../services/userApi.js';
-import { offerApi } from '../../services/offerApi.js';
+import React, {useEffect, useState} from 'react';
+import {Plus, Trash2} from 'lucide-react';
+import {orderApi} from '../../services/orderApi.js';
+import {customerApi} from '../../services/customerApi.js';
+import {userApi} from '../../services/userApi.js';
+import {offerApi} from '../../services/offerApi.js';
 import ApiError from '../../utils/errorUtil.js';
 import ErrorDisplay from '../../components/ErrorDisplay.jsx';
 
-const CreateOrderForm = ({ onSuccess, onCancel }) => {
+const CreateOrderForm = ({onSuccess, onCancel}) => {
     const [formData, setFormData] = useState({
         customerId: '',
         userId: '',
-        items: [{ offerId: '', quantity: 1 }]
+        items: [{offerId: '', quantity: 1}]
     });
     const [loading, setLoading] = useState(false);
     const [customers, setCustomers] = useState([]);
@@ -60,14 +60,14 @@ const CreateOrderForm = ({ onSuccess, onCancel }) => {
     const addOrderItem = () => {
         setFormData({
             ...formData,
-            items: [...formData.items, { offerId: '', quantity: 1 }]
+            items: [...formData.items, {offerId: '', quantity: 1}]
         });
     };
 
     const removeOrderItem = (index) => {
         if (formData.items.length > 1) {
             const newItems = formData.items.filter((_, i) => i !== index);
-            setFormData({ ...formData, items: newItems });
+            setFormData({...formData, items: newItems});
         }
     };
 
@@ -77,7 +77,7 @@ const CreateOrderForm = ({ onSuccess, onCancel }) => {
             ...newItems[index],
             [field]: field === 'quantity' ? parseInt(value) || 1 : value
         };
-        setFormData({ ...formData, items: newItems });
+        setFormData({...formData, items: newItems});
         if (error) setError(null);
     };
 
@@ -104,7 +104,7 @@ const CreateOrderForm = ({ onSuccess, onCancel }) => {
             setFormData({
                 customerId: '',
                 userId: '',
-                items: [{ offerId: '', quantity: 1 }]
+                items: [{offerId: '', quantity: 1}]
             });
 
             if (goBack || !continueCreating) {
@@ -172,7 +172,7 @@ const CreateOrderForm = ({ onSuccess, onCancel }) => {
             </div>
 
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <ErrorDisplay error={error} onDismiss={() => setError(null)} />
+                <ErrorDisplay error={error} onDismiss={() => setError(null)}/>
 
                 <div className="space-y-6">
                     {/* Customer Selection */}
@@ -183,7 +183,7 @@ const CreateOrderForm = ({ onSuccess, onCancel }) => {
                         <select
                             value={formData.customerId}
                             onChange={(e) => {
-                                setFormData({ ...formData, customerId: e.target.value });
+                                setFormData({...formData, customerId: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -206,7 +206,7 @@ const CreateOrderForm = ({ onSuccess, onCancel }) => {
                         <select
                             value={formData.userId}
                             onChange={(e) => {
-                                setFormData({ ...formData, userId: e.target.value });
+                                setFormData({...formData, userId: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -233,7 +233,7 @@ const CreateOrderForm = ({ onSuccess, onCancel }) => {
                                 disabled={loading}
                                 className="flex items-center space-x-2 px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-sm"
                             >
-                                <Plus className="w-4 h-4" />
+                                <Plus className="w-4 h-4"/>
                                 <span>Add Item</span>
                             </button>
                         </div>
@@ -252,7 +252,7 @@ const CreateOrderForm = ({ onSuccess, onCancel }) => {
                                                 disabled={loading}
                                                 className="p-1 text-red-600 hover:bg-red-100 rounded-md disabled:opacity-50"
                                             >
-                                                <Trash2 className="w-4 h-4" />
+                                                <Trash2 className="w-4 h-4"/>
                                             </button>
                                         )}
                                     </div>

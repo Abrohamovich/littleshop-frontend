@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatDate } from '../../utils/dateUtil.js';
+import {formatDate} from '../../utils/dateUtil.js';
 import DataTable from '../DataTable.jsx'
 
 const OffersTable = ({

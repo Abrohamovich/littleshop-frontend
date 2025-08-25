@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, Edit, Save, X } from 'lucide-react';
-import { orderApi } from '../../services/orderApi.js';
-import { customerApi } from '../../services/customerApi.js';
-import { offerApi } from '../../services/offerApi.js';
+import React, {useEffect, useState} from 'react';
+import {Edit, Plus, Trash2} from 'lucide-react';
+import {orderApi} from '../../services/orderApi.js';
+import {customerApi} from '../../services/customerApi.js';
+import {offerApi} from '../../services/offerApi.js';
 import ApiError from '../../utils/errorUtil.js';
 import ErrorDisplay from '../../components/ErrorDisplay.jsx';
 
-const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
+const UpdateOrderForm = ({orderId, onSuccess, onCancel}) => {
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(false);
     const [initialLoading, setInitialLoading] = useState(true);
@@ -14,7 +14,7 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
     const [offers, setOffers] = useState([]);
     const [selectedCustomerId, setSelectedCustomerId] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('');
-    const [newItem, setNewItem] = useState({ offerId: '', quantity: 1 });
+    const [newItem, setNewItem] = useState({offerId: '', quantity: 1});
     const [editingItem, setEditingItem] = useState(null)
     const [error, setError] = useState(null);
 
@@ -80,7 +80,7 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
 
         setLoading(true);
         try {
-            const updatedOrder = await orderApi.changeCustomer(orderId, { customerId: parseInt(selectedCustomerId) });
+            const updatedOrder = await orderApi.changeCustomer(orderId, {customerId: parseInt(selectedCustomerId)});
             setOrder(updatedOrder);
         } catch (error) {
             console.error('Error changing customer:', error);
@@ -108,7 +108,7 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
 
         setLoading(true);
         try {
-            const updatedOrder = await orderApi.changeStatus(orderId, { status: selectedStatus });
+            const updatedOrder = await orderApi.changeStatus(orderId, {status: selectedStatus});
             setOrder(updatedOrder);
         } catch (error) {
             console.error('Error changing status:', error);
@@ -141,7 +141,7 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
                 quantity: parseInt(newItem.quantity)
             });
             setOrder(updatedOrder);
-            setNewItem({ offerId: '', quantity: 1 });
+            setNewItem({offerId: '', quantity: 1});
         } catch (error) {
             console.error('Error adding item:', error);
 
@@ -168,7 +168,7 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
 
         setLoading(true);
         try {
-            const updatedOrder = await orderApi.removeOrderItem(orderId, { orderItemId });
+            const updatedOrder = await orderApi.removeOrderItem(orderId, {orderItemId});
             setOrder(updatedOrder);
         } catch (error) {
             console.error('Error removing item:', error);
@@ -270,7 +270,7 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
                 </div>
 
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <ErrorDisplay error={error} onDismiss={() => setError(null)} />
+                    <ErrorDisplay error={error} onDismiss={() => setError(null)}/>
 
                     <div className="flex space-x-4 mt-6">
                         <button
@@ -303,7 +303,7 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
             </div>
 
             <div className="space-y-6">
-                <ErrorDisplay error={error} onDismiss={() => setError(null)} />
+                <ErrorDisplay error={error} onDismiss={() => setError(null)}/>
 
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                     <h2 className="text-lg font-semibold text-gray-900 mb-4">Order Information</h2>
@@ -347,7 +347,8 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
                             <div className="flex space-x-2">
                                 <select
                                     value={selectedStatus}
-                                    onChange={(e) => {setSelectedStatus(e.target.value);
+                                    onChange={(e) => {
+                                        setSelectedStatus(e.target.value);
                                         if (error) setError(null);
                                     }}
                                     className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -412,14 +413,14 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
                                             disabled={loading}
                                             className="p-1 text-blue-600 hover:bg-blue-100 rounded-md disabled:opacity-50"
                                         >
-                                            <Edit className="w-4 h-4" />
+                                            <Edit className="w-4 h-4"/>
                                         </button>
                                         <button
                                             onClick={() => handleRemoveItem(item.id)}
                                             disabled={loading}
                                             className="p-1 text-red-600 hover:bg-red-100 rounded-md disabled:opacity-50"
                                         >
-                                            <Trash2 className="w-4 h-4" />
+                                            <Trash2 className="w-4 h-4"/>
                                         </button>
                                     </div>
                                 </div>
@@ -434,7 +435,7 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
                                 <select
                                     value={newItem.offerId}
                                     onChange={(e) => {
-                                        setNewItem({ ...newItem, offerId: e.target.value });
+                                        setNewItem({...newItem, offerId: e.target.value});
                                         if (error) setError(null);
                                     }}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -453,7 +454,8 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
                                     type="number"
                                     min="1"
                                     value={newItem.quantity}
-                                    onChange={(e) => {setNewItem({ ...newItem, quantity: parseInt(e.target.value) || 1 });
+                                    onChange={(e) => {
+                                        setNewItem({...newItem, quantity: parseInt(e.target.value) || 1});
                                         if (error) setError(null);
                                     }}
                                     className="w-24 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -466,7 +468,7 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
                                 disabled={loading || !newItem.offerId || newItem.quantity <= 0}
                                 className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
                             >
-                                <Plus className="w-4 h-4" />
+                                <Plus className="w-4 h-4"/>
                                 <span>Add</span>
                             </button>
                         </div>

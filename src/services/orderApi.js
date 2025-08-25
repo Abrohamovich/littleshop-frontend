@@ -5,8 +5,8 @@ export const orderApi = {
         const params = new URLSearchParams({
             page: page.toString(),
             size: size.toString(),
-            ...(customerId && { customerId }),
-            ...(userId && { userId })
+            ...(customerId && {customerId}),
+            ...(userId && {userId})
         });
 
         const response = await fetch(`/api/v1/orders?${params}`, {
@@ -98,7 +98,7 @@ export const orderApi = {
         return handleResponse(response);
     },
 
-    async updateOrderItemQuantity(id, data){
+    async updateOrderItemQuantity(id, data) {
         const response = await fetch(`/api/v1/orders/update-item-quantity/${id}`, {
             method: 'PUT',
             headers: {

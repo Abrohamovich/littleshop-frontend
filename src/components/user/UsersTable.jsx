@@ -2,21 +2,21 @@ import React from 'react';
 import DataTable from "../DataTable.jsx";
 
 const UsersTable = ({
-                             users,
-                             loading,
-                             visibleColumns,
-                             availableColumns,
-                             onDeleteUser,
-                             onUpdateUser,
-                             currentPage,
-                             setCurrentPage,
-                             pageSize,
-                             setPageSize,
-                             totalPages,
-                             totalElements,
-                             error,
-                             onRetry
-                         }) => {
+                        users,
+                        loading,
+                        visibleColumns,
+                        availableColumns,
+                        onDeleteUser,
+                        onUpdateUser,
+                        currentPage,
+                        setCurrentPage,
+                        pageSize,
+                        setPageSize,
+                        totalPages,
+                        totalElements,
+                        error,
+                        onRetry
+                    }) => {
     return (
         <DataTable
             data={users}

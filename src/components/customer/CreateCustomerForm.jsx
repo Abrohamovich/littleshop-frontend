@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { customerApi } from '../../services/customerApi.js';
+import React, {useState} from 'react';
+import {customerApi} from '../../services/customerApi.js';
 import ApiError from "../../utils/errorUtil.js";
-import { sanitizeFormData } from '../../utils/sanitizeUtil.js';
+import {sanitizeFormData} from '../../utils/sanitizeUtil.js';
 import ErrorDisplay from '../../components/ErrorDisplay.jsx';
 
-const CreateCustomerForm = ({ onSuccess, onCancel }) => {
+const CreateCustomerForm = ({onSuccess, onCancel}) => {
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -65,7 +65,7 @@ const CreateCustomerForm = ({ onSuccess, onCancel }) => {
             </div>
 
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <ErrorDisplay error={error} onDismiss={() => setError(null)} />
+                <ErrorDisplay error={error} onDismiss={() => setError(null)}/>
 
                 <div className="space-y-4">
                     <div>
@@ -76,7 +76,7 @@ const CreateCustomerForm = ({ onSuccess, onCancel }) => {
                             type="text"
                             value={formData.firstName}
                             onChange={(e) => {
-                                setFormData({ ...formData, firstName: e.target.value });
+                                setFormData({...formData, firstName: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -93,7 +93,7 @@ const CreateCustomerForm = ({ onSuccess, onCancel }) => {
                             type="text"
                             value={formData.lastName}
                             onChange={(e) => {
-                                setFormData({ ...formData, lastName: e.target.value });
+                                setFormData({...formData, lastName: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -110,7 +110,7 @@ const CreateCustomerForm = ({ onSuccess, onCancel }) => {
                             type="email"
                             value={formData.email}
                             onChange={(e) => {
-                                setFormData({ ...formData, email: e.target.value });
+                                setFormData({...formData, email: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -127,7 +127,7 @@ const CreateCustomerForm = ({ onSuccess, onCancel }) => {
                             type="tel"
                             value={formData.phone}
                             onChange={(e) => {
-                                setFormData({ ...formData, phone: e.target.value });
+                                setFormData({...formData, phone: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -143,7 +143,7 @@ const CreateCustomerForm = ({ onSuccess, onCancel }) => {
                         <textarea
                             value={formData.address}
                             onChange={(e) => {
-                                setFormData({ ...formData, address: e.target.value });
+                                setFormData({...formData, address: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"

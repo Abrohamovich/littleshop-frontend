@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { offerApi } from '../../services/offerApi.js';
-import { categoryApi } from '../../services/categoryApi.js';
-import { supplierApi } from '../../services/supplierApi.js';
+import React, {useEffect, useState} from 'react';
+import {offerApi} from '../../services/offerApi.js';
+import {categoryApi} from '../../services/categoryApi.js';
+import {supplierApi} from '../../services/supplierApi.js';
 import ApiError from "../../utils/errorUtil.js";
 import ErrorDisplay from '../../components/ErrorDisplay.jsx';
 
-const CreateOfferForm = ({ onSuccess, onCancel }) => {
+const CreateOfferForm = ({onSuccess, onCancel}) => {
     const [formData, setFormData] = useState({
         name: '',
         price: '',
@@ -140,7 +140,7 @@ const CreateOfferForm = ({ onSuccess, onCancel }) => {
             </div>
 
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <ErrorDisplay error={error} onDismiss={() => setError(null)} />
+                <ErrorDisplay error={error} onDismiss={() => setError(null)}/>
 
                 <div className="space-y-4">
                     <div>
@@ -151,7 +151,7 @@ const CreateOfferForm = ({ onSuccess, onCancel }) => {
                             type="text"
                             value={formData.name}
                             onChange={(e) => {
-                                setFormData({ ...formData, name: e.target.value });
+                                setFormData({...formData, name: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -170,7 +170,7 @@ const CreateOfferForm = ({ onSuccess, onCancel }) => {
                             min="0"
                             value={formData.price}
                             onChange={(e) => {
-                                setFormData({ ...formData, price: e.target.value });
+                                setFormData({...formData, price: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -186,7 +186,7 @@ const CreateOfferForm = ({ onSuccess, onCancel }) => {
                         <select
                             value={formData.type}
                             onChange={(e) => {
-                                setFormData({ ...formData, type: e.target.value });
+                                setFormData({...formData, type: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -204,7 +204,7 @@ const CreateOfferForm = ({ onSuccess, onCancel }) => {
                         <select
                             value={formData.categoryId}
                             onChange={(e) => {
-                                setFormData({ ...formData, categoryId: e.target.value });
+                                setFormData({...formData, categoryId: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -226,7 +226,7 @@ const CreateOfferForm = ({ onSuccess, onCancel }) => {
                         <select
                             value={formData.supplierId}
                             onChange={(e) => {
-                                setFormData({ ...formData, supplierId: e.target.value });
+                                setFormData({...formData, supplierId: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -248,7 +248,7 @@ const CreateOfferForm = ({ onSuccess, onCancel }) => {
                         <textarea
                             value={formData.description}
                             onChange={(e) => {
-                                setFormData({ ...formData, description: e.target.value });
+                                setFormData({...formData, description: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"

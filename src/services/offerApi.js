@@ -5,11 +5,11 @@ export const offerApi = {
         const params = new URLSearchParams({
             page: page.toString(),
             size: size.toString(),
-            ...(name && { name }),
-            ...(categoryId && { categoryId }),
-            ...(supplierId && { supplierId }),
-            ...(priceGreaterEqual && { priceGreaterEqual }),
-            ...(priceLessEqual && { priceLessEqual })
+            ...(name && {name}),
+            ...(categoryId && {categoryId}),
+            ...(supplierId && {supplierId}),
+            ...(priceGreaterEqual && {priceGreaterEqual}),
+            ...(priceLessEqual && {priceLessEqual})
         });
 
         const response = await fetch(`/api/v1/offers?${params}`, {

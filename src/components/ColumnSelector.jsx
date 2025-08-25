@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { Eye, ChevronDown } from 'lucide-react';
+import React, {useEffect, useRef} from 'react';
+import {ChevronDown, Eye} from 'lucide-react';
 
 const ColumnSelector = ({
                             availableColumns,
@@ -32,12 +32,14 @@ const ColumnSelector = ({
                 onClick={() => setShowSelector(!showSelector)}
                 className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
             >
-                <Eye className="w-4 h-4" />
+                <Eye className="w-4 h-4"/>
                 <span>Columns</span>
-                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${showSelector ? 'rotate-180' : ''}`} />
+                <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-200 ${showSelector ? 'rotate-180' : ''}`}/>
             </button>
             {showSelector && (
-                <div className="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-20">
+                <div
+                    className="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-20">
                     <div className="p-2 border-b border-gray-200">
                         <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Show Columns

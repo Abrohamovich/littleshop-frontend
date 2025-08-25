@@ -1,6 +1,6 @@
 import React from 'react';
-import { MoreVertical, RefreshCw } from 'lucide-react';
-import { formatDate } from '../utils/dateUtil.js';
+import {MoreVertical, RefreshCw} from 'lucide-react';
+import {formatDate} from '../utils/dateUtil.js';
 
 const DataTable = ({
                        data,
@@ -37,7 +37,8 @@ const DataTable = ({
             <div className="p-8 text-center">
                 <div className="text-gray-400 mb-4">
                     <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1}
+                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                     </svg>
                 </div>
                 <p className="text-gray-500 mb-4">Unable to load {entityName}</p>
@@ -46,7 +47,7 @@ const DataTable = ({
                         onClick={onRetry}
                         className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 mx-auto"
                     >
-                        <RefreshCw className="w-4 h-4" />
+                        <RefreshCw className="w-4 h-4"/>
                         <span>Try Again</span>
                     </button>
                 )}
@@ -59,7 +60,8 @@ const DataTable = ({
             <div className="p-8 text-center">
                 <div className="text-gray-400 mb-4">
                     <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1}
+                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                     </svg>
                 </div>
                 <p className="text-gray-500">No {entityName} found</p>
@@ -89,7 +91,8 @@ const DataTable = ({
                         {visibleColumns.map((columnKey) => {
                             const column = availableColumns.find(col => col.key === columnKey);
                             return (
-                                <th key={columnKey} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th key={columnKey}
+                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     {column.label}
                                 </th>
                             );
@@ -101,7 +104,7 @@ const DataTable = ({
                     {data.map((item) => (
                         <tr key={item.id} className="hover:bg-gray-50">
                             <td className="px-6 py-4">
-                                <input type="checkbox" className="rounded" />
+                                <input type="checkbox" className="rounded"/>
                             </td>
                             {visibleColumns.map((columnKey) => (
                                 <td key={columnKey} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -123,9 +126,10 @@ const DataTable = ({
                                         }}
                                         className="p-1 rounded-md hover:bg-gray-100"
                                     >
-                                        <MoreVertical className="w-4 h-4 text-gray-400" />
+                                        <MoreVertical className="w-4 h-4 text-gray-400"/>
                                     </button>
-                                    <div className={`dropdown-menu hidden absolute right-0 top-full mt-1 ${customActions ? 'w-48' : 'w-32'} bg-white border border-gray-200 rounded-md shadow-lg z-10`}>
+                                    <div
+                                        className={`dropdown-menu hidden absolute right-0 top-full mt-1 ${customActions ? 'w-48' : 'w-32'} bg-white border border-gray-200 rounded-md shadow-lg z-10`}>
                                         {customActions && customActions.map((action, index) => (
                                             <button
                                                 key={index}

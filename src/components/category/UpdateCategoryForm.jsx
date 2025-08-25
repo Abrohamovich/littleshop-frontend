@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { categoryApi } from '../../services/categoryApi.js';
+import React, {useEffect, useState} from 'react';
+import {categoryApi} from '../../services/categoryApi.js';
 import ApiError from '../../utils/errorUtil.js';
-import { sanitizeFormData } from '../../utils/sanitizeUtil.js';
+import {sanitizeFormData} from '../../utils/sanitizeUtil.js';
 import ErrorDisplay from '../../components/ErrorDisplay.jsx';
 
-const UpdateCategoryForm = ({ categoryId, onSuccess, onCancel }) => {
+const UpdateCategoryForm = ({categoryId, onSuccess, onCancel}) => {
     const [formData, setFormData] = useState({
         name: '',
         description: ''
@@ -125,7 +125,7 @@ const UpdateCategoryForm = ({ categoryId, onSuccess, onCancel }) => {
                 </div>
 
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <ErrorDisplay error={error} onDismiss={() => setError(null)} />
+                    <ErrorDisplay error={error} onDismiss={() => setError(null)}/>
 
                     <div className="flex space-x-4 mt-6">
                         <button
@@ -158,7 +158,7 @@ const UpdateCategoryForm = ({ categoryId, onSuccess, onCancel }) => {
             </div>
 
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <ErrorDisplay error={error} onDismiss={() => setError(null)} />
+                <ErrorDisplay error={error} onDismiss={() => setError(null)}/>
 
                 <div className="space-y-4">
                     <div>
@@ -169,7 +169,7 @@ const UpdateCategoryForm = ({ categoryId, onSuccess, onCancel }) => {
                             type="text"
                             value={formData.name}
                             onChange={(e) => {
-                                setFormData({ ...formData, name: e.target.value });
+                                setFormData({...formData, name: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -185,7 +185,7 @@ const UpdateCategoryForm = ({ categoryId, onSuccess, onCancel }) => {
                         <textarea
                             value={formData.description}
                             onChange={(e) => {
-                                setFormData({ ...formData, description: e.target.value });
+                                setFormData({...formData, description: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"

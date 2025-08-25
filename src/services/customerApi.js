@@ -5,9 +5,9 @@ export const customerApi = {
         const params = new URLSearchParams({
             page: page.toString(),
             size: size.toString(),
-            ...(firstName && { firstName }),
-            ...(lastName && { lastName }),
-            ...(email && { email }),
+            ...(firstName && {firstName}),
+            ...(lastName && {lastName}),
+            ...(email && {email}),
         });
 
         const response = await fetch(`/api/v1/customers?${params}`, {

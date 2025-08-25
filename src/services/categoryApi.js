@@ -1,12 +1,12 @@
-import { handleResponse } from '../utils/errorUtil.js';
+import {handleResponse} from '../utils/errorUtil.js';
 
 export const categoryApi = {
     async getCategories(page = 0, size = 10, name = '', description = '') {
         const params = new URLSearchParams({
             page: page.toString(),
             size: size.toString(),
-            ...(name && { name }),
-            ...(description && { description })
+            ...(name && {name}),
+            ...(description && {description})
         });
 
         const response = await fetch(`/api/v1/categories?${params}`, {

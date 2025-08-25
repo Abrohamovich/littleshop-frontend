@@ -1,6 +1,6 @@
 import React from 'react';
-import { Eye } from 'lucide-react';
-import { formatDate } from '../../utils/dateUtil.js';
+import {Eye} from 'lucide-react';
+import {formatDate} from '../../utils/dateUtil.js';
 import DataTable from "../DataTable.jsx";
 
 const OrdersTable = ({
@@ -34,12 +34,12 @@ const OrdersTable = ({
 
     const formatStatus = (status) => {
         const statusMap = {
-            'IN_PROGRESS': { text: 'In Progress', color: 'bg-yellow-100 text-yellow-800' },
-            'COMPLETED': { text: 'Completed', color: 'bg-purple-100 text-purple-800' },
-            'CANCELLED': { text: 'Cancelled', color: 'bg-red-100 text-red-800' }
+            'IN_PROGRESS': {text: 'In Progress', color: 'bg-yellow-100 text-yellow-800'},
+            'COMPLETED': {text: 'Completed', color: 'bg-purple-100 text-purple-800'},
+            'CANCELLED': {text: 'Cancelled', color: 'bg-red-100 text-red-800'}
         };
 
-        const statusInfo = statusMap[status] || { text: status, color: 'bg-gray-100 text-gray-800' };
+        const statusInfo = statusMap[status] || {text: status, color: 'bg-gray-100 text-gray-800'};
 
         return (
             <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusInfo.color}`}>
@@ -71,7 +71,7 @@ const OrdersTable = ({
     const customActions = [
         {
             label: 'View Details',
-            icon: <Eye className="w-4 h-4" />,
+            icon: <Eye className="w-4 h-4"/>,
             onClick: (order) => {
                 // TODO: Implement view order details
                 console.log('View order details:', order.id);

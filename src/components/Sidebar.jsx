@@ -1,14 +1,14 @@
 import React from 'react';
 
-const Sidebar = ({ currentView, setCurrentView }) => {
+const Sidebar = ({currentView, setCurrentView}) => {
     const menuItems = [
-        { id: 'infopanel', label: 'Infopanel', icon: '📊' },
-        { id: 'categories', label: 'Categories', icon: '📁' },
-        { id: 'customers', label: 'Customers', icon: '👥' },
-        { id: 'orders', label: 'Orders', icon: '📋' },
-        { id: 'offers', label: 'Offers', icon: '🛍️' },
-        { id: 'suppliers', label: 'Suppliers', icon: '🏢' },
-        { id: 'users', label: 'Users', icon: '👤' }
+        {id: 'infopanel', label: 'Infopanel', icon: '📊'},
+        {id: 'categories', label: 'Categories', icon: '📁'},
+        {id: 'customers', label: 'Customers', icon: '👥'},
+        {id: 'orders', label: 'Orders', icon: '📋'},
+        {id: 'offers', label: 'Offers', icon: '🛍️'},
+        {id: 'suppliers', label: 'Suppliers', icon: '🏢'},
+        {id: 'users', label: 'Users', icon: '👤'}
     ];
 
     return (

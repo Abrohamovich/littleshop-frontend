@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { userApi } from '../../services/userApi.js';
-import { sanitizeFormData } from '../../utils/sanitizeUtil.js';
+import React, {useState} from 'react';
+import {userApi} from '../../services/userApi.js';
+import {sanitizeFormData} from '../../utils/sanitizeUtil.js';
 import ApiError from "../../utils/errorUtil.js";
 import ErrorDisplay from '../../components/ErrorDisplay.jsx';
 
-const CreateUserForm = ({ onSuccess, onCancel }) => {
+const CreateUserForm = ({onSuccess, onCancel}) => {
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -68,7 +68,7 @@ const CreateUserForm = ({ onSuccess, onCancel }) => {
             </div>
 
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <ErrorDisplay error={error} onDismiss={() => setError(null)} />
+                <ErrorDisplay error={error} onDismiss={() => setError(null)}/>
 
                 <div className="space-y-4">
                     <div>
@@ -79,7 +79,7 @@ const CreateUserForm = ({ onSuccess, onCancel }) => {
                             type="text"
                             value={formData.firstName}
                             onChange={(e) => {
-                                setFormData({ ...formData, firstName: e.target.value });
+                                setFormData({...formData, firstName: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -96,7 +96,7 @@ const CreateUserForm = ({ onSuccess, onCancel }) => {
                             type="text"
                             value={formData.lastName}
                             onChange={(e) => {
-                                setFormData({ ...formData, lastName: e.target.value });
+                                setFormData({...formData, lastName: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -113,7 +113,7 @@ const CreateUserForm = ({ onSuccess, onCancel }) => {
                             type="email"
                             value={formData.email}
                             onChange={(e) => {
-                                setFormData({ ...formData, email: e.target.value });
+                                setFormData({...formData, email: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -130,7 +130,7 @@ const CreateUserForm = ({ onSuccess, onCancel }) => {
                             type="tel"
                             value={formData.phone}
                             onChange={(e) => {
-                                setFormData({ ...formData, phone: e.target.value });
+                                setFormData({...formData, phone: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -147,7 +147,7 @@ const CreateUserForm = ({ onSuccess, onCancel }) => {
                             type="password"
                             value={formData.password}
                             onChange={(e) => {
-                                setFormData({ ...formData, password: e.target.value });
+                                setFormData({...formData, password: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -163,7 +163,7 @@ const CreateUserForm = ({ onSuccess, onCancel }) => {
                         <select
                             value={formData.role}
                             onChange={(e) => {
-                                setFormData({ ...formData, role: e.target.value });
+                                setFormData({...formData, role: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"

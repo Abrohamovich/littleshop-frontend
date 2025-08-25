@@ -1,25 +1,25 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Search, Plus, MoreVertical, Eye, ChevronDown } from 'lucide-react';
-import { offerApi } from '../../services/offerApi.js';
+import React, {useCallback, useEffect, useState} from 'react';
+import {Plus, Search} from 'lucide-react';
+import {offerApi} from '../../services/offerApi.js';
 import ApiError from '../../utils/errorUtil.js';
 import OffersTable from './OffersTable.jsx';
 import CreateOfferForm from './CreateOfferForm.jsx';
 import ColumnSelector from '../ColumnSelector.jsx';
 import UpdateOfferForm from "./UpdateOfferForm.jsx";
 import ErrorDisplay from '../../components/ErrorDisplay.jsx';
-import { createColumnToggleHandler } from '../../utils/columnUtils.js';
+import {createColumnToggleHandler} from '../../utils/columnUtils.js';
 import {useTableManagement} from "../../hooks/useTableManagement.js";
 
 const AVAILABLE_COLUMNS = [
-    { key: 'id', label: 'ID', type: 'number' },
-    { key: 'name', label: 'Name', type: 'text' },
-    { key: 'price', label: 'Price', type: 'number' },
-    { key: 'type', label: 'Type', type: 'text' },
-    { key: 'category', label: 'Category', type: 'text' },
-    { key: 'supplier', label: 'Supplier', type: 'text' },
-    { key: 'description', label: 'Description', type: 'text' },
-    { key: 'createdAt', label: 'Created At', type: 'date' },
-    { key: 'updatedAt', label: 'Updated At', type: 'date' }
+    {key: 'id', label: 'ID', type: 'number'},
+    {key: 'name', label: 'Name', type: 'text'},
+    {key: 'price', label: 'Price', type: 'number'},
+    {key: 'type', label: 'Type', type: 'text'},
+    {key: 'category', label: 'Category', type: 'text'},
+    {key: 'supplier', label: 'Supplier', type: 'text'},
+    {key: 'description', label: 'Description', type: 'text'},
+    {key: 'createdAt', label: 'Created At', type: 'date'},
+    {key: 'updatedAt', label: 'Updated At', type: 'date'}
 ];
 
 const Offers = () => {
@@ -206,7 +206,8 @@ const Offers = () => {
                     <div className="flex justify-between items-center mb-4">
                         <div className="flex items-center space-x-4">
                             <div className="relative">
-                                <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                                <Search
+                                    className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"/>
                                 <input
                                     type="text"
                                     placeholder="Search offers..."
@@ -232,7 +233,7 @@ const Offers = () => {
                             className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                             disabled={loading}
                         >
-                            <Plus className="w-4 h-4" />
+                            <Plus className="w-4 h-4"/>
                             <span>Create</span>
                         </button>
                     </div>

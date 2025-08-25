@@ -1,24 +1,24 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Search, Plus, MoreVertical, Eye, ChevronDown } from 'lucide-react';
-import { userApi } from '../../services/userApi.js';
+import React, {useCallback, useEffect, useState} from 'react';
+import {Plus, Search} from 'lucide-react';
+import {userApi} from '../../services/userApi.js';
 import UsersTable from './UsersTable.jsx';
 import CreateUserForm from './CreateUserForm.jsx';
 import ColumnSelector from '../ColumnSelector.jsx';
 import UpdateUserForm from "./UpdateUserForm.jsx";
-import { createColumnToggleHandler } from '../../utils/columnUtils.js';
+import {createColumnToggleHandler} from '../../utils/columnUtils.js';
 import {useTableManagement} from "../../hooks/useTableManagement.js";
 import ApiError from '../../utils/errorUtil.js';
 import ErrorDisplay from '../../components/ErrorDisplay.jsx';
 
 const AVAILABLE_COLUMNS = [
-    { key: 'id', label: 'ID', type: 'number' },
-    { key: 'firstName', label: 'First Name', type: 'text' },
-    { key: 'lastName', label: 'Last Name', type: 'text' },
-    { key: 'email', label: 'Email', type: 'text' },
-    { key: 'role', label: 'Role', type: 'text' },
-    { key: 'phone', label: 'Phone', type: 'text' },
-    { key: 'createdAt', label: 'Created At', type: 'date' },
-    { key: 'updatedAt', label: 'Updated At', type: 'date' }
+    {key: 'id', label: 'ID', type: 'number'},
+    {key: 'firstName', label: 'First Name', type: 'text'},
+    {key: 'lastName', label: 'Last Name', type: 'text'},
+    {key: 'email', label: 'Email', type: 'text'},
+    {key: 'role', label: 'Role', type: 'text'},
+    {key: 'phone', label: 'Phone', type: 'text'},
+    {key: 'createdAt', label: 'Created At', type: 'date'},
+    {key: 'updatedAt', label: 'Updated At', type: 'date'}
 ];
 
 const Users = () => {
@@ -207,7 +207,8 @@ const Users = () => {
                     <div className="flex justify-between items-center mb-4">
                         <div className="flex items-center space-x-4">
                             <div className="relative">
-                                <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                                <Search
+                                    className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"/>
                                 <input
                                     type="text"
                                     placeholder="Search users..."
@@ -233,7 +234,7 @@ const Users = () => {
                             className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                             disabled={loading}
                         >
-                            <Plus className="w-4 h-4" />
+                            <Plus className="w-4 h-4"/>
                             <span>Create</span>
                         </button>
                     </div>

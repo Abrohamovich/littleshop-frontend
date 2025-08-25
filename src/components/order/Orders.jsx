@@ -1,26 +1,26 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Search, Plus, Filter } from 'lucide-react';
-import { orderApi } from '../../services/orderApi.js';
-import { customerApi } from '../../services/customerApi.js';
-import { userApi } from '../../services/userApi.js';
+import React, {useCallback, useEffect, useState} from 'react';
+import {Filter, Plus} from 'lucide-react';
+import {orderApi} from '../../services/orderApi.js';
+import {customerApi} from '../../services/customerApi.js';
+import {userApi} from '../../services/userApi.js';
 import OrdersTable from './OrdersTable.jsx';
 import CreateOrderForm from './CreateOrderForm.jsx';
 import UpdateOrderForm from './UpdateOrderForm.jsx';
 import ColumnSelector from '../ColumnSelector.jsx';
-import { createColumnToggleHandler } from '../../utils/columnUtils.js';
-import { useTableManagement } from "../../hooks/useTableManagement.js";
+import {createColumnToggleHandler} from '../../utils/columnUtils.js';
+import {useTableManagement} from "../../hooks/useTableManagement.js";
 import ApiError from '../../utils/errorUtil.js';
 import ErrorDisplay from '../../components/ErrorDisplay.jsx';
 
 const AVAILABLE_COLUMNS = [
-    { key: 'id', label: 'ID', type: 'number' },
-    { key: 'customer', label: 'Customer', type: 'text' },
-    { key: 'user', label: 'User', type: 'text' },
-    { key: 'status', label: 'Status', type: 'text' },
-    { key: 'itemsCount', label: 'Items Count', type: 'number' },
-    { key: 'totalAmount', label: 'Total Amount', type: 'currency' },
-    { key: 'createdAt', label: 'Created At', type: 'date' },
-    { key: 'updatedAt', label: 'Updated At', type: 'date' }
+    {key: 'id', label: 'ID', type: 'number'},
+    {key: 'customer', label: 'Customer', type: 'text'},
+    {key: 'user', label: 'User', type: 'text'},
+    {key: 'status', label: 'Status', type: 'text'},
+    {key: 'itemsCount', label: 'Items Count', type: 'number'},
+    {key: 'totalAmount', label: 'Total Amount', type: 'currency'},
+    {key: 'createdAt', label: 'Created At', type: 'date'},
+    {key: 'updatedAt', label: 'Updated At', type: 'date'}
 ];
 
 const Orders = () => {
@@ -154,12 +154,12 @@ const Orders = () => {
     }, [loadOrders]);
 
     const handleFilterChange = (filterKey, value) => {
-        setFilters(prev => ({ ...prev, [filterKey]: value }));
+        setFilters(prev => ({...prev, [filterKey]: value}));
         resetToFirstPage();
     };
 
     const clearFilters = () => {
-        setFilters({ customerId: '', userId: '' });
+        setFilters({customerId: '', userId: ''});
         resetToFirstPage();
     };
 
@@ -262,7 +262,7 @@ const Orders = () => {
                                         : 'border-gray-300 text-gray-700 hover:bg-gray-50'
                                 }`}
                             >
-                                <Filter className="w-4 h-4" />
+                                <Filter className="w-4 h-4"/>
                                 <span>Filters</span>
                                 {Object.values(filters).some(f => f) && (
                                     <span className="bg-blue-500 text-white rounded-full px-2 py-0.5 text-xs">
@@ -284,7 +284,7 @@ const Orders = () => {
                             className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                             disabled={loading}
                         >
-                            <Plus className="w-4 h-4" />
+                            <Plus className="w-4 h-4"/>
                             <span>Create</span>
                         </button>
                     </div>

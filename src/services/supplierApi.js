@@ -5,9 +5,9 @@ export const supplierApi = {
         const params = new URLSearchParams({
             page: page.toString(),
             size: size.toString(),
-            ...(name && { name }),
-            ...(email && { email }),
-            ...(phone && { phone }),
+            ...(name && {name}),
+            ...(email && {email}),
+            ...(phone && {phone}),
         });
 
         const response = await fetch(`/api/v1/suppliers?${params}`, {

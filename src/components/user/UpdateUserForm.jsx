@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { userApi } from '../../services/userApi.js';
+import React, {useEffect, useState} from 'react';
+import {userApi} from '../../services/userApi.js';
 import ApiError from '../../utils/errorUtil.js';
-import { sanitizeFormData } from '../../utils/sanitizeUtil.js';
+import {sanitizeFormData} from '../../utils/sanitizeUtil.js';
 import ErrorDisplay from '../../components/ErrorDisplay.jsx';
 
-const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
+const UpdateUserForm = ({userId, onSuccess, onCancel}) => {
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -133,7 +133,7 @@ const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
                 </div>
 
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <ErrorDisplay error={error} onDismiss={() => setError(null)} />
+                    <ErrorDisplay error={error} onDismiss={() => setError(null)}/>
 
                     <div className="flex space-x-4 mt-6">
                         <button
@@ -166,7 +166,7 @@ const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
             </div>
 
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <ErrorDisplay error={error} onDismiss={() => setError(null)} />
+                <ErrorDisplay error={error} onDismiss={() => setError(null)}/>
 
                 <div className="space-y-4">
                     <div>
@@ -177,7 +177,7 @@ const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
                             type="text"
                             value={formData.firstName}
                             onChange={(e) => {
-                                setFormData({ ...formData, firstName: e.target.value });
+                                setFormData({...formData, firstName: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -194,7 +194,7 @@ const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
                             type="text"
                             value={formData.lastName}
                             onChange={(e) => {
-                                setFormData({ ...formData, lastName: e.target.value });
+                                setFormData({...formData, lastName: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -211,7 +211,7 @@ const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
                             type="email"
                             value={formData.email}
                             onChange={(e) => {
-                                setFormData({ ...formData, email: e.target.value });
+                                setFormData({...formData, email: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -228,7 +228,7 @@ const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
                             type="tel"
                             value={formData.phone}
                             onChange={(e) => {
-                                setFormData({ ...formData, phone: e.target.value });
+                                setFormData({...formData, phone: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -245,7 +245,7 @@ const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
                             type="password"
                             value={formData.password}
                             onChange={(e) => {
-                                setFormData({ ...formData, password: e.target.value });
+                                setFormData({...formData, password: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -261,7 +261,7 @@ const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
                         <select
                             value={formData.role}
                             onChange={(e) => {
-                                setFormData({ ...formData, role: e.target.value });
+                                setFormData({...formData, role: e.target.value});
                                 if (error) setError(null);
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
