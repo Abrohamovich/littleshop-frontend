@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { userApi } from '../../services/userApi.js';
+import ApiError from '../../utils/errorUtil.js';
 import { sanitizeFormData } from '../../utils/sanitizeUtil.js';
+import ErrorDisplay from '../../components/ErrorDisplay.jsx';
 
 const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
     const [formData, setFormData] = useState({
@@ -13,16 +15,23 @@ const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
     });
     const [loading, setLoading] = useState(false);
     const [initialLoading, setInitialLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const loadUser = async () => {
             if (!userId) {
                 console.error('No user ID provided');
-                onCancel();
+                setError({
+                    message: 'No user ID provided',
+                    status: 400,
+                    timestamp: new Date().toISOString()
+                });
                 return;
             }
 
             setInitialLoading(true);
+            setError(null);
+
             try {
                 const user = await userApi.getUserById(userId);
                 setFormData({
@@ -35,17 +44,32 @@ const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
                 });
             } catch (error) {
                 console.error('Error loading user:', error);
-                onCancel();
+
+                if (error instanceof ApiError) {
+                    setError({
+                        message: error.message,
+                        status: error.status,
+                        timestamp: error.timestamp
+                    });
+                } else {
+                    setError({
+                        message: 'Failed to load user',
+                        status: 500,
+                        timestamp: new Date().toISOString()
+                    });
+                }
             } finally {
                 setInitialLoading(false);
             }
         };
 
         loadUser();
-    }, [userId, onCancel]);
+    }, [userId]);
 
     const handleUpdateUser = async (continueCreating = false, goBack = false) => {
         setLoading(true);
+        setError(null);
+
         try {
             const sanitizedData = sanitizeFormData(formData);
             await userApi.updateUser(userId, sanitizedData);
@@ -55,6 +79,20 @@ const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
             }
         } catch (error) {
             console.error('Error updating user:', error);
+
+            if (error instanceof ApiError) {
+                setError({
+                    message: error.message,
+                    status: error.status,
+                    timestamp: error.timestamp
+                });
+            } else {
+                setError({
+                    message: 'An unexpected error occurred while updating the user',
+                    status: 500,
+                    timestamp: new Date().toISOString()
+                });
+            }
         } finally {
             setLoading(false);
         }
@@ -63,9 +101,54 @@ const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
     if (initialLoading) {
         return (
             <div className="p-8">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-2 text-gray-500">Loading user...</p>
+                <div className="mb-6">
+                    <h1 className="text-2xl font-bold text-gray-900">Update User</h1>
+                    <nav className="flex mt-2 text-sm text-gray-600">
+                        <span>Users</span>
+                        <span className="mx-2">&#62;</span>
+                        <span>Update</span>
+                    </nav>
+                </div>
+
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <div className="text-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                        <p className="mt-2 text-gray-500">Loading user...</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (error && !loading && (error.status === 404 || error.status >= 500)) {
+        return (
+            <div className="p-8">
+                <div className="mb-6">
+                    <h1 className="text-2xl font-bold text-gray-900">Update User</h1>
+                    <nav className="flex mt-2 text-sm text-gray-600">
+                        <span>Users</span>
+                        <span className="mx-2">&#62;</span>
+                        <span>Update</span>
+                    </nav>
+                </div>
+
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <ErrorDisplay error={error} onDismiss={() => setError(null)} />
+
+                    <div className="flex space-x-4 mt-6">
+                        <button
+                            onClick={() => window.location.reload()}
+                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                        >
+                            Retry
+                        </button>
+                        <button
+                            onClick={onCancel}
+                            className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                        >
+                            Go Back
+                        </button>
+                    </div>
                 </div>
             </div>
         );
@@ -76,13 +159,15 @@ const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
             <div className="mb-6">
                 <h1 className="text-2xl font-bold text-gray-900">Update User</h1>
                 <nav className="flex mt-2 text-sm text-gray-600">
-                    <span>Categories</span>
+                    <span>Users</span>
                     <span className="mx-2">&#62;</span>
                     <span>Update</span>
                 </nav>
             </div>
 
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <ErrorDisplay error={error} onDismiss={() => setError(null)} />
+
                 <div className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -91,7 +176,10 @@ const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
                         <input
                             type="text"
                             value={formData.firstName}
-                            onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({ ...formData, firstName: e.target.value });
+                                if (error) setError(null);
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter user first name"
                             disabled={loading}
@@ -105,7 +193,10 @@ const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
                         <input
                             type="text"
                             value={formData.lastName}
-                            onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({ ...formData, lastName: e.target.value });
+                                if (error) setError(null);
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter user last name"
                             disabled={loading}
@@ -119,7 +210,10 @@ const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
                         <input
                             type="email"
                             value={formData.email}
-                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({ ...formData, email: e.target.value });
+                                if (error) setError(null);
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter user email"
                             disabled={loading}
@@ -133,7 +227,10 @@ const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
                         <input
                             type="tel"
                             value={formData.phone}
-                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({ ...formData, phone: e.target.value });
+                                if (error) setError(null);
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter user phone"
                             disabled={loading}
@@ -147,7 +244,10 @@ const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
                         <input
                             type="password"
                             value={formData.password}
-                            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({ ...formData, password: e.target.value });
+                                if (error) setError(null);
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter user password"
                             disabled={loading}
@@ -160,7 +260,10 @@ const UpdateUserForm = ({ userId, onSuccess, onCancel }) => {
                         </label>
                         <select
                             value={formData.role}
-                            onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({ ...formData, role: e.target.value });
+                                if (error) setError(null);
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             disabled={loading}
                         >

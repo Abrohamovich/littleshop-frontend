@@ -13,7 +13,9 @@ const UsersTable = ({
                              pageSize,
                              setPageSize,
                              totalPages,
-                             totalElements
+                             totalElements,
+                             error,
+                             onRetry
                          }) => {
     return (
         <DataTable
@@ -30,6 +32,8 @@ const UsersTable = ({
             totalPages={totalPages}
             totalElements={totalElements}
             entityName="users"
+            error={error}
+            onRetry={onRetry}
         />
     )
 };

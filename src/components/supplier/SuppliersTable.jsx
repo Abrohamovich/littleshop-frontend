@@ -13,7 +13,9 @@ const SuppliersTable = ({
                              pageSize,
                              setPageSize,
                              totalPages,
-                             totalElements
+                             totalElements,
+                             error,
+                             onRetry
                          }) => {
     return (
         <DataTable
@@ -30,6 +32,8 @@ const SuppliersTable = ({
             totalPages={totalPages}
             totalElements={totalElements}
             entityName="suppliers"
+            error={error}
+            onRetry={onRetry}
         />
     )
 };

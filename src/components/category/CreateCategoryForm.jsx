@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { categoryApi } from '../../services/categoryApi.js';
+import ApiError from "../../utils/errorUtil.js";
 import { sanitizeFormData } from '../../utils/sanitizeUtil.js';
+import ErrorDisplay from '../../components/ErrorDisplay.jsx';
 
 const CreateCategoryForm = ({ onSuccess, onCancel }) => {
     const [formData, setFormData] = useState({
@@ -8,11 +10,12 @@ const CreateCategoryForm = ({ onSuccess, onCancel }) => {
         description: ''
     });
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const handleCreateCategory = async (continueCreating = false, goBack = false) => {
-        if (!formData.name.trim()) return;
-
         setLoading(true);
+        setError(null);
+
         try {
             const sanitizedData = sanitizeFormData(formData);
             await categoryApi.createCategory(sanitizedData);
@@ -23,6 +26,20 @@ const CreateCategoryForm = ({ onSuccess, onCancel }) => {
             }
         } catch (error) {
             console.error('Error creating category:', error);
+
+            if (error instanceof ApiError) {
+                setError({
+                    message: error.message,
+                    status: error.status,
+                    timestamp: error.timestamp
+                });
+            } else {
+                setError({
+                    message: 'An unexpected error occurred',
+                    status: 500,
+                    timestamp: new Date().toISOString()
+                });
+            }
         } finally {
             setLoading(false);
         }
@@ -40,6 +57,8 @@ const CreateCategoryForm = ({ onSuccess, onCancel }) => {
             </div>
 
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <ErrorDisplay error={error} onDismiss={() => setError(null)} />
+
                 <div className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -48,7 +67,10 @@ const CreateCategoryForm = ({ onSuccess, onCancel }) => {
                         <input
                             type="text"
                             value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({ ...formData, name: e.target.value });
+                                if (error) setError(null);
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter category name"
                             disabled={loading}
@@ -61,7 +83,10 @@ const CreateCategoryForm = ({ onSuccess, onCancel }) => {
                         </label>
                         <textarea
                             value={formData.description}
-                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({ ...formData, description: e.target.value });
+                                if (error) setError(null);
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             rows={4}
                             placeholder="Enter category description"
@@ -76,14 +101,14 @@ const CreateCategoryForm = ({ onSuccess, onCancel }) => {
                         disabled={!formData.name.trim() || loading}
                         className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
                     >
-                        Create and Continue Creating
+                        {loading ? 'Creating...' : 'Create and Continue Creating'}
                     </button>
                     <button
                         onClick={() => handleCreateCategory(false, true)}
                         disabled={!formData.name.trim() || loading}
                         className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
                     >
-                        Create and Go Back
+                        {loading ? 'Creating...' : 'Create and Go Back'}
                     </button>
                     <button
                         onClick={onCancel}
