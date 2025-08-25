@@ -1,11 +1,13 @@
+import {handleResponse} from "../utils/errorUtil.js";
+
 export const supplierApi = {
     async getSuppliers(page = 0, size = 10, name = '', email = '', phone = '') {
         const params = new URLSearchParams({
             page: page.toString(),
             size: size.toString(),
-            ...(name && { name }),
-            ...(email && { email }),
-            ...(phone && { phone }),
+            ...(name && {name}),
+            ...(email && {email}),
+            ...(phone && {phone}),
         });
 
         const response = await fetch(`/api/v1/suppliers?${params}`, {
@@ -15,11 +17,7 @@ export const supplierApi = {
             },
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     },
 
     async createSupplier(data) {
@@ -31,11 +29,7 @@ export const supplierApi = {
             body: JSON.stringify(data)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     },
 
     async deleteSupplier(id) {
@@ -43,9 +37,7 @@ export const supplierApi = {
             method: 'DELETE'
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        return handleResponse(response);
     },
 
     async getSupplierById(id) {
@@ -56,11 +48,7 @@ export const supplierApi = {
             },
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     },
 
     async updateSupplier(id, data) {
@@ -72,10 +60,6 @@ export const supplierApi = {
             body: JSON.stringify(data)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     }
 };

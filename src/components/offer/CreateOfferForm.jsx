@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { offerApi } from '../../services/offerApi.js';
-import { categoryApi } from '../../services/categoryApi.js';
-import { supplierApi } from '../../services/supplierApi.js';
+import React, {useEffect, useState} from 'react';
+import {offerApi} from '../../services/offerApi.js';
+import {categoryApi} from '../../services/categoryApi.js';
+import {supplierApi} from '../../services/supplierApi.js';
+import ApiError from "../../utils/errorUtil.js";
+import ErrorDisplay from '../../components/ErrorDisplay.jsx';
 
-const CreateOfferForm = ({ onSuccess, onCancel }) => {
+const CreateOfferForm = ({onSuccess, onCancel}) => {
     const [formData, setFormData] = useState({
         name: '',
         price: '',
@@ -16,9 +18,11 @@ const CreateOfferForm = ({ onSuccess, onCancel }) => {
     const [categories, setCategories] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
     const [loadingData, setLoadingData] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const loadData = async () => {
+            setError(null);
             try {
                 const [categoriesResponse, suppliersResponse] = await Promise.all([
                     categoryApi.getCategories(0, 100),
@@ -29,6 +33,20 @@ const CreateOfferForm = ({ onSuccess, onCancel }) => {
                 setSuppliers(Array.isArray(suppliersResponse.content) ? suppliersResponse.content : []);
             } catch (error) {
                 console.error('Error loading data:', error);
+
+                if (error instanceof ApiError) {
+                    setError({
+                        message: error.message,
+                        status: error.status,
+                        timestamp: error.timestamp
+                    });
+                } else {
+                    setError({
+                        message: 'An unexpected error occurred',
+                        status: 500,
+                        timestamp: new Date().toISOString()
+                    });
+                }
             } finally {
                 setLoadingData(false);
             }
@@ -54,6 +72,7 @@ const CreateOfferForm = ({ onSuccess, onCancel }) => {
 
     const handleCreateOffer = async (continueCreating = false, goBack = false) => {
         setLoading(true);
+        setError(null);
         try {
             const sanitizedData = sanitizeFormData(formData);
             await offerApi.createOffer(sanitizedData);
@@ -72,6 +91,20 @@ const CreateOfferForm = ({ onSuccess, onCancel }) => {
             }
         } catch (error) {
             console.error('Error creating offer:', error);
+
+            if (error instanceof ApiError) {
+                setError({
+                    message: error.message,
+                    status: error.status,
+                    timestamp: error.timestamp
+                });
+            } else {
+                setError({
+                    message: 'An unexpected error occurred',
+                    status: 500,
+                    timestamp: new Date().toISOString()
+                });
+            }
         } finally {
             setLoading(false);
         }
@@ -107,6 +140,8 @@ const CreateOfferForm = ({ onSuccess, onCancel }) => {
             </div>
 
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <ErrorDisplay error={error} onDismiss={() => setError(null)}/>
+
                 <div className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -115,7 +150,10 @@ const CreateOfferForm = ({ onSuccess, onCancel }) => {
                         <input
                             type="text"
                             value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({...formData, name: e.target.value});
+                                if (error) setError(null);
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter offer name"
                             disabled={loading}
@@ -131,7 +169,10 @@ const CreateOfferForm = ({ onSuccess, onCancel }) => {
                             step="0.01"
                             min="0"
                             value={formData.price}
-                            onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({...formData, price: e.target.value});
+                                if (error) setError(null);
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter price"
                             disabled={loading}
@@ -144,7 +185,10 @@ const CreateOfferForm = ({ onSuccess, onCancel }) => {
                         </label>
                         <select
                             value={formData.type}
-                            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({...formData, type: e.target.value});
+                                if (error) setError(null);
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             disabled={loading}
                         >
@@ -159,7 +203,10 @@ const CreateOfferForm = ({ onSuccess, onCancel }) => {
                         </label>
                         <select
                             value={formData.categoryId}
-                            onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({...formData, categoryId: e.target.value});
+                                if (error) setError(null);
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             disabled={loading}
                         >
@@ -178,7 +225,10 @@ const CreateOfferForm = ({ onSuccess, onCancel }) => {
                         </label>
                         <select
                             value={formData.supplierId}
-                            onChange={(e) => setFormData({ ...formData, supplierId: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({...formData, supplierId: e.target.value});
+                                if (error) setError(null);
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             disabled={loading}
                         >
@@ -197,7 +247,10 @@ const CreateOfferForm = ({ onSuccess, onCancel }) => {
                         </label>
                         <textarea
                             value={formData.description}
-                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({...formData, description: e.target.value});
+                                if (error) setError(null);
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             rows={4}
                             placeholder="Enter offer description"
@@ -212,14 +265,14 @@ const CreateOfferForm = ({ onSuccess, onCancel }) => {
                         disabled={!isFormValid() || loading}
                         className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
                     >
-                        Create and Continue Creating
+                        {loading ? 'Creating...' : 'Create and Continue Creating'}
                     </button>
                     <button
                         onClick={() => handleCreateOffer(false, true)}
                         disabled={!isFormValid() || loading}
                         className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
                     >
-                        Create and Go Back
+                        {loading ? 'Creating...' : 'Create and Go Back'}
                     </button>
                     <button
                         onClick={onCancel}

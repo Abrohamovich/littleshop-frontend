@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
-import { customerApi } from '../../services/customerApi.js';
-import { sanitizeFormData } from '../../utils/sanitizeUtil.js';
+import React, {useState} from 'react';
+import {customerApi} from '../../services/customerApi.js';
+import ApiError from "../../utils/errorUtil.js";
+import {sanitizeFormData} from '../../utils/sanitizeUtil.js';
+import ErrorDisplay from '../../components/ErrorDisplay.jsx';
 
-const CreateCustomerForm = ({ onSuccess, onCancel }) => {
+const CreateCustomerForm = ({onSuccess, onCancel}) => {
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -11,13 +13,14 @@ const CreateCustomerForm = ({ onSuccess, onCancel }) => {
         address: ''
     });
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const handleCreateCustomer = async (continueCreating = false, goBack = false) => {
         setLoading(true);
+        setError(null);
         try {
             const sanitizedData = sanitizeFormData(formData);
             await customerApi.createCustomer(sanitizedData);
-
             setFormData({
                 firstName: '',
                 lastName: '',
@@ -31,6 +34,20 @@ const CreateCustomerForm = ({ onSuccess, onCancel }) => {
             }
         } catch (error) {
             console.error('Error creating customer:', error);
+
+            if (error instanceof ApiError) {
+                setError({
+                    message: error.message,
+                    status: error.status,
+                    timestamp: error.timestamp
+                });
+            } else {
+                setError({
+                    message: 'An unexpected error occurred',
+                    status: 500,
+                    timestamp: new Date().toISOString()
+                });
+            }
         } finally {
             setLoading(false);
         }
@@ -48,6 +65,8 @@ const CreateCustomerForm = ({ onSuccess, onCancel }) => {
             </div>
 
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <ErrorDisplay error={error} onDismiss={() => setError(null)}/>
+
                 <div className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -56,7 +75,10 @@ const CreateCustomerForm = ({ onSuccess, onCancel }) => {
                         <input
                             type="text"
                             value={formData.firstName}
-                            onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({...formData, firstName: e.target.value});
+                                if (error) setError(null);
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter customer first name"
                             disabled={loading}
@@ -70,7 +92,10 @@ const CreateCustomerForm = ({ onSuccess, onCancel }) => {
                         <input
                             type="text"
                             value={formData.lastName}
-                            onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({...formData, lastName: e.target.value});
+                                if (error) setError(null);
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter customer last name"
                             disabled={loading}
@@ -84,7 +109,10 @@ const CreateCustomerForm = ({ onSuccess, onCancel }) => {
                         <input
                             type="email"
                             value={formData.email}
-                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({...formData, email: e.target.value});
+                                if (error) setError(null);
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter customer email"
                             disabled={loading}
@@ -98,7 +126,10 @@ const CreateCustomerForm = ({ onSuccess, onCancel }) => {
                         <input
                             type="tel"
                             value={formData.phone}
-                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({...formData, phone: e.target.value});
+                                if (error) setError(null);
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter customer phone"
                             disabled={loading}
@@ -111,7 +142,10 @@ const CreateCustomerForm = ({ onSuccess, onCancel }) => {
                         </label>
                         <textarea
                             value={formData.address}
-                            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({...formData, address: e.target.value});
+                                if (error) setError(null);
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             rows={4}
                             placeholder="Enter customer address"
@@ -126,14 +160,14 @@ const CreateCustomerForm = ({ onSuccess, onCancel }) => {
                         disabled={!formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim() || !formData.phone.trim() || loading}
                         className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
                     >
-                        Create and Continue Creating
+                        {loading ? 'Creating...' : 'Create and Continue Creating'}
                     </button>
                     <button
                         onClick={() => handleCreateCustomer(false, true)}
                         disabled={!formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim() || !formData.phone.trim() || loading}
                         className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
                     >
-                        Create and Go Back
+                        {loading ? 'Creating...' : 'Create and Go Back'}
                     </button>
                     <button
                         onClick={onCancel}

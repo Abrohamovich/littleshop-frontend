@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatDate } from '../../utils/dateUtil.js';
+import {formatDate} from '../../utils/dateUtil.js';
 import DataTable from '../DataTable.jsx'
 
 const OffersTable = ({
@@ -14,7 +14,9 @@ const OffersTable = ({
                          pageSize,
                          setPageSize,
                          totalPages,
-                         totalElements
+                         totalElements,
+                         error,
+                         onRetry
                      }) => {
     const formatOfferValue = (offer, columnKey) => {
         switch (columnKey) {
@@ -53,6 +55,8 @@ const OffersTable = ({
             totalElements={totalElements}
             entityName="offers"
             customFormatter={formatOfferValue}
+            error={error}
+            onRetry={onRetry}
         />
     );
 };

@@ -1,10 +1,12 @@
+import {handleResponse} from '../utils/errorUtil.js';
+
 export const categoryApi = {
     async getCategories(page = 0, size = 10, name = '', description = '') {
         const params = new URLSearchParams({
             page: page.toString(),
             size: size.toString(),
-            ...(name && { name }),
-            ...(description && { description })
+            ...(name && {name}),
+            ...(description && {description})
         });
 
         const response = await fetch(`/api/v1/categories?${params}`, {
@@ -14,11 +16,7 @@ export const categoryApi = {
             },
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     },
 
     async createCategory(data) {
@@ -30,11 +28,7 @@ export const categoryApi = {
             body: JSON.stringify(data)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     },
 
     async deleteCategory(id) {
@@ -42,9 +36,7 @@ export const categoryApi = {
             method: 'DELETE'
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        return handleResponse(response);
     },
 
     async getCategoryById(id) {
@@ -55,11 +47,7 @@ export const categoryApi = {
             },
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     },
 
     async updateCategory(id, data) {
@@ -71,10 +59,6 @@ export const categoryApi = {
             body: JSON.stringify(data)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     }
 };

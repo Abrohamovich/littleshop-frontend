@@ -1,11 +1,13 @@
+import {handleResponse} from "../utils/errorUtil.js";
+
 export const customerApi = {
     async getCustomers(page = 0, size = 10, firstName = '', lastName = '', email = '') {
         const params = new URLSearchParams({
             page: page.toString(),
             size: size.toString(),
-            ...(firstName && { firstName }),
-            ...(lastName && { lastName }),
-            ...(email && { email }),
+            ...(firstName && {firstName}),
+            ...(lastName && {lastName}),
+            ...(email && {email}),
         });
 
         const response = await fetch(`/api/v1/customers?${params}`, {
@@ -15,11 +17,7 @@ export const customerApi = {
             },
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     },
 
     async createCustomer(data) {
@@ -31,11 +29,7 @@ export const customerApi = {
             body: JSON.stringify(data)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     },
 
     async deleteCustomer(id) {
@@ -43,9 +37,7 @@ export const customerApi = {
             method: 'DELETE'
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        return handleResponse(response);
     },
 
     async getCustomerById(id) {
@@ -56,11 +48,7 @@ export const customerApi = {
             },
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     },
 
     async updateCustomer(id, data) {
@@ -72,10 +60,6 @@ export const customerApi = {
             body: JSON.stringify(data)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     }
 };

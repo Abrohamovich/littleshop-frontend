@@ -1,13 +1,15 @@
+import {handleResponse} from "../utils/errorUtil.js";
+
 export const offerApi = {
     async getOffers(page = 0, size = 10, name = '', categoryId = 0, supplierId = 0, priceGreaterEqual = 0, priceLessEqual = 0) {
         const params = new URLSearchParams({
             page: page.toString(),
             size: size.toString(),
-            ...(name && { name }),
-            ...(categoryId && { categoryId }),
-            ...(supplierId && { supplierId }),
-            ...(priceGreaterEqual && { priceGreaterEqual }),
-            ...(priceLessEqual && { priceLessEqual })
+            ...(name && {name}),
+            ...(categoryId && {categoryId}),
+            ...(supplierId && {supplierId}),
+            ...(priceGreaterEqual && {priceGreaterEqual}),
+            ...(priceLessEqual && {priceLessEqual})
         });
 
         const response = await fetch(`/api/v1/offers?${params}`, {
@@ -17,11 +19,7 @@ export const offerApi = {
             },
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     },
 
     async createOffer(data) {
@@ -33,11 +31,7 @@ export const offerApi = {
             body: JSON.stringify(data)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     },
 
     async deleteOffer(id) {
@@ -45,9 +39,7 @@ export const offerApi = {
             method: 'DELETE'
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        return handleResponse(response);
     },
 
     async getOfferById(id) {
@@ -58,11 +50,7 @@ export const offerApi = {
             },
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     },
 
     async updateOffer(id, data) {
@@ -74,10 +62,6 @@ export const offerApi = {
             body: JSON.stringify(data)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response.json();
+        return handleResponse(response);
     }
 };

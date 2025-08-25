@@ -2,19 +2,21 @@ import React from 'react';
 import DataTable from "../DataTable.jsx";
 
 const UsersTable = ({
-                             users,
-                             loading,
-                             visibleColumns,
-                             availableColumns,
-                             onDeleteUser,
-                             onUpdateUser,
-                             currentPage,
-                             setCurrentPage,
-                             pageSize,
-                             setPageSize,
-                             totalPages,
-                             totalElements
-                         }) => {
+                        users,
+                        loading,
+                        visibleColumns,
+                        availableColumns,
+                        onDeleteUser,
+                        onUpdateUser,
+                        currentPage,
+                        setCurrentPage,
+                        pageSize,
+                        setPageSize,
+                        totalPages,
+                        totalElements,
+                        error,
+                        onRetry
+                    }) => {
     return (
         <DataTable
             data={users}
@@ -30,6 +32,8 @@ const UsersTable = ({
             totalPages={totalPages}
             totalElements={totalElements}
             entityName="users"
+            error={error}
+            onRetry={onRetry}
         />
     )
 };

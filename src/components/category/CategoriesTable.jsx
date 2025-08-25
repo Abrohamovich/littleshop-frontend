@@ -13,7 +13,9 @@ const CategoriesTable = ({
                              pageSize,
                              setPageSize,
                              totalPages,
-                             totalElements
+                             totalElements,
+                             error,
+                             onRetry
                          }) => {
     return (
         <DataTable
@@ -30,6 +32,8 @@ const CategoriesTable = ({
             totalPages={totalPages}
             totalElements={totalElements}
             entityName="categories"
+            error={error}
+            onRetry={onRetry}
         />
     )
 };
