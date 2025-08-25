@@ -15,7 +15,9 @@ const OrdersTable = ({
                          pageSize,
                          setPageSize,
                          totalPages,
-                         totalElements
+                         totalElements,
+                         error,
+                         onRetry
                      }) => {
 
     const formatCurrency = (amount) => {
@@ -95,6 +97,8 @@ const OrdersTable = ({
             customFormatter={formatOrderValue}
             customActions={customActions}
             updateButtonText="Manage Order"
+            error={error}
+            onRetry={onRetry}
         />
     );
 };

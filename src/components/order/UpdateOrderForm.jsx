@@ -3,6 +3,8 @@ import { Plus, Trash2, Edit, Save, X } from 'lucide-react';
 import { orderApi } from '../../services/orderApi.js';
 import { customerApi } from '../../services/customerApi.js';
 import { offerApi } from '../../services/offerApi.js';
+import ApiError from '../../utils/errorUtil.js';
+import ErrorDisplay from '../../components/ErrorDisplay.jsx';
 
 const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
     const [order, setOrder] = useState(null);
@@ -13,7 +15,8 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
     const [selectedCustomerId, setSelectedCustomerId] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('');
     const [newItem, setNewItem] = useState({ offerId: '', quantity: 1 });
-    const [editingItem, setEditingItem] = useState(null);
+    const [editingItem, setEditingItem] = useState(null)
+    const [error, setError] = useState(null);
 
     const ORDER_STATUSES = [
         'IN_PROGRESS',
@@ -25,11 +28,17 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
         const loadData = async () => {
             if (!orderId) {
                 console.error('No order ID provided');
-                onCancel();
+                setError({
+                    message: 'No order ID provided',
+                    status: 400,
+                    timestamp: new Date().toISOString()
+                });
                 return;
             }
 
             setInitialLoading(true);
+            setError(null);
+
             try {
                 const [orderData, customersResponse, offersResponse] = await Promise.all([
                     orderApi.getOrderById(orderId),
@@ -44,7 +53,20 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
                 setOffers(Array.isArray(offersResponse.content) ? offersResponse.content : []);
             } catch (error) {
                 console.error('Error loading data:', error);
-                onCancel();
+
+                if (error instanceof ApiError) {
+                    setError({
+                        message: error.message,
+                        status: error.status,
+                        timestamp: error.timestamp
+                    });
+                } else {
+                    setError({
+                        message: 'Failed to load order',
+                        status: 500,
+                        timestamp: new Date().toISOString()
+                    });
+                }
             } finally {
                 setInitialLoading(false);
             }
@@ -62,6 +84,20 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
             setOrder(updatedOrder);
         } catch (error) {
             console.error('Error changing customer:', error);
+
+            if (error instanceof ApiError) {
+                setError({
+                    message: error.message,
+                    status: error.status,
+                    timestamp: error.timestamp
+                });
+            } else {
+                setError({
+                    message: 'Error changing customer',
+                    status: 500,
+                    timestamp: new Date().toISOString()
+                });
+            }
         } finally {
             setLoading(false);
         }
@@ -76,6 +112,20 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
             setOrder(updatedOrder);
         } catch (error) {
             console.error('Error changing status:', error);
+
+            if (error instanceof ApiError) {
+                setError({
+                    message: error.message,
+                    status: error.status,
+                    timestamp: error.timestamp
+                });
+            } else {
+                setError({
+                    message: 'Error changing status',
+                    status: 500,
+                    timestamp: new Date().toISOString()
+                });
+            }
         } finally {
             setLoading(false);
         }
@@ -94,6 +144,20 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
             setNewItem({ offerId: '', quantity: 1 });
         } catch (error) {
             console.error('Error adding item:', error);
+
+            if (error instanceof ApiError) {
+                setError({
+                    message: error.message,
+                    status: error.status,
+                    timestamp: error.timestamp
+                });
+            } else {
+                setError({
+                    message: 'Error adding item',
+                    status: 500,
+                    timestamp: new Date().toISOString()
+                });
+            }
         } finally {
             setLoading(false);
         }
@@ -108,6 +172,20 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
             setOrder(updatedOrder);
         } catch (error) {
             console.error('Error removing item:', error);
+
+            if (error instanceof ApiError) {
+                setError({
+                    message: error.message,
+                    status: error.status,
+                    timestamp: error.timestamp
+                });
+            } else {
+                setError({
+                    message: 'Error removing item',
+                    status: 500,
+                    timestamp: new Date().toISOString()
+                });
+            }
         } finally {
             setLoading(false);
         }
@@ -126,6 +204,20 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
             setEditingItem(null);
         } catch (error) {
             console.error('Error updating item quantity:', error);
+
+            if (error instanceof ApiError) {
+                setError({
+                    message: error.message,
+                    status: error.status,
+                    timestamp: error.timestamp
+                });
+            } else {
+                setError({
+                    message: 'Error updating item quantity',
+                    status: 500,
+                    timestamp: new Date().toISOString()
+                });
+            }
         } finally {
             setLoading(false);
         }
@@ -146,19 +238,54 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
     if (initialLoading) {
         return (
             <div className="p-8">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-2 text-gray-500">Loading order...</p>
+                <div className="mb-6">
+                    <h1 className="text-2xl font-bold text-gray-900">Update Order</h1>
+                    <nav className="flex mt-2 text-sm text-gray-600">
+                        <span>Orders</span>
+                        <span className="mx-2">&#62;</span>
+                        <span>Update</span>
+                    </nav>
+                </div>
+
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <div className="text-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                        <p className="mt-2 text-gray-500">Loading order...</p>
+                    </div>
                 </div>
             </div>
         );
     }
 
-    if (!order) {
+    if (error && !loading && (error.status === 404 || error.status >= 500)) {
         return (
             <div className="p-8">
-                <div className="text-center">
-                    <p className="text-red-500">Order not found</p>
+                <div className="mb-6">
+                    <h1 className="text-2xl font-bold text-gray-900">Update Order</h1>
+                    <nav className="flex mt-2 text-sm text-gray-600">
+                        <span>Orders</span>
+                        <span className="mx-2">&#62;</span>
+                        <span>Update</span>
+                    </nav>
+                </div>
+
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <ErrorDisplay error={error} onDismiss={() => setError(null)} />
+
+                    <div className="flex space-x-4 mt-6">
+                        <button
+                            onClick={() => window.location.reload()}
+                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                        >
+                            Retry
+                        </button>
+                        <button
+                            onClick={onCancel}
+                            className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                        >
+                            Go Back
+                        </button>
+                    </div>
                 </div>
             </div>
         );
@@ -176,6 +303,8 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
             </div>
 
             <div className="space-y-6">
+                <ErrorDisplay error={error} onDismiss={() => setError(null)} />
+
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                     <h2 className="text-lg font-semibold text-gray-900 mb-4">Order Information</h2>
 
@@ -187,7 +316,10 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
                             <div className="flex space-x-2">
                                 <select
                                     value={selectedCustomerId}
-                                    onChange={(e) => setSelectedCustomerId(e.target.value)}
+                                    onChange={(e) => {
+                                        setSelectedCustomerId(e.target.value);
+                                        if (error) setError(null);
+                                    }}
                                     className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     disabled={loading}
                                 >
@@ -215,7 +347,9 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
                             <div className="flex space-x-2">
                                 <select
                                     value={selectedStatus}
-                                    onChange={(e) => setSelectedStatus(e.target.value)}
+                                    onChange={(e) => {setSelectedStatus(e.target.value);
+                                        if (error) setError(null);
+                                    }}
                                     className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     disabled={loading}
                                 >
@@ -261,10 +395,8 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
                                                     defaultValue={item.quantity}
                                                     className="mx-2 w-20 px-2 py-1 border border-gray-300 rounded text-sm"
                                                     onBlur={(e) => handleUpdateItemQuantity(item.id, e.target.value)}
-                                                    onKeyPress={(e) => {
-                                                        if (e.key === 'Enter') {
-                                                            handleUpdateItemQuantity(item.id, e.target.value);
-                                                        }
+                                                    onClick={(e) => {
+                                                        handleUpdateItemQuantity(item.id, e.target.value);
                                                     }}
                                                     autoFocus
                                                 />
@@ -301,7 +433,10 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
                             <div className="flex-1">
                                 <select
                                     value={newItem.offerId}
-                                    onChange={(e) => setNewItem({ ...newItem, offerId: e.target.value })}
+                                    onChange={(e) => {
+                                        setNewItem({ ...newItem, offerId: e.target.value });
+                                        if (error) setError(null);
+                                    }}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     disabled={loading}
                                 >
@@ -318,7 +453,9 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
                                     type="number"
                                     min="1"
                                     value={newItem.quantity}
-                                    onChange={(e) => setNewItem({ ...newItem, quantity: parseInt(e.target.value) || 1 })}
+                                    onChange={(e) => {setNewItem({ ...newItem, quantity: parseInt(e.target.value) || 1 });
+                                        if (error) setError(null);
+                                    }}
                                     className="w-24 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     placeholder="Qty"
                                     disabled={loading}
@@ -349,7 +486,7 @@ const UpdateOrderForm = ({ orderId, onSuccess, onCancel }) => {
                         onClick={onSuccess}
                         className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                     >
-                        Back to Orders
+                        {loading ? 'Updating...' : 'Update and Go Back'}
                     </button>
                     <button
                         onClick={onCancel}

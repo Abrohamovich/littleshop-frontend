@@ -4,6 +4,8 @@ import { orderApi } from '../../services/orderApi.js';
 import { customerApi } from '../../services/customerApi.js';
 import { userApi } from '../../services/userApi.js';
 import { offerApi } from '../../services/offerApi.js';
+import ApiError from '../../utils/errorUtil.js';
+import ErrorDisplay from '../../components/ErrorDisplay.jsx';
 
 const CreateOrderForm = ({ onSuccess, onCancel }) => {
     const [formData, setFormData] = useState({
@@ -16,9 +18,11 @@ const CreateOrderForm = ({ onSuccess, onCancel }) => {
     const [users, setUsers] = useState([]);
     const [offers, setOffers] = useState([]);
     const [loadingData, setLoadingData] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const loadData = async () => {
+            setError(null);
             try {
                 const [customersResponse, usersResponse, offersResponse] = await Promise.all([
                     customerApi.getCustomers(0, 1000),
@@ -31,6 +35,20 @@ const CreateOrderForm = ({ onSuccess, onCancel }) => {
                 setOffers(Array.isArray(offersResponse.content) ? offersResponse.content : []);
             } catch (error) {
                 console.error('Error loading data:', error);
+
+                if (error instanceof ApiError) {
+                    setError({
+                        message: error.message,
+                        status: error.status,
+                        timestamp: error.timestamp
+                    });
+                } else {
+                    setError({
+                        message: 'An unexpected error occurred',
+                        status: 500,
+                        timestamp: new Date().toISOString()
+                    });
+                }
             } finally {
                 setLoadingData(false);
             }
@@ -60,6 +78,7 @@ const CreateOrderForm = ({ onSuccess, onCancel }) => {
             [field]: field === 'quantity' ? parseInt(value) || 1 : value
         };
         setFormData({ ...formData, items: newItems });
+        if (error) setError(null);
     };
 
     const sanitizeFormData = (data) => {
@@ -77,6 +96,7 @@ const CreateOrderForm = ({ onSuccess, onCancel }) => {
 
     const handleCreateOrder = async (continueCreating = false, goBack = false) => {
         setLoading(true);
+        setError(null);
         try {
             const sanitizedData = sanitizeFormData(formData);
             await orderApi.createOrder(sanitizedData);
@@ -92,6 +112,20 @@ const CreateOrderForm = ({ onSuccess, onCancel }) => {
             }
         } catch (error) {
             console.error('Error creating order:', error);
+
+            if (error instanceof ApiError) {
+                setError({
+                    message: error.message,
+                    status: error.status,
+                    timestamp: error.timestamp
+                });
+            } else {
+                setError({
+                    message: 'An unexpected error occurred',
+                    status: 500,
+                    timestamp: new Date().toISOString()
+                });
+            }
         } finally {
             setLoading(false);
         }
@@ -107,9 +141,20 @@ const CreateOrderForm = ({ onSuccess, onCancel }) => {
     if (loadingData) {
         return (
             <div className="p-8">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-2 text-gray-500">Loading data...</p>
+                <div className="mb-6">
+                    <h1 className="text-2xl font-bold text-gray-900">Create Order</h1>
+                    <nav className="flex mt-2 text-sm text-gray-600">
+                        <span>Orders</span>
+                        <span className="mx-2">&#62;</span>
+                        <span>Create</span>
+                    </nav>
+                </div>
+
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <div className="text-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                        <p className="mt-2 text-gray-500">Loading data...</p>
+                    </div>
                 </div>
             </div>
         );
@@ -127,6 +172,8 @@ const CreateOrderForm = ({ onSuccess, onCancel }) => {
             </div>
 
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <ErrorDisplay error={error} onDismiss={() => setError(null)} />
+
                 <div className="space-y-6">
                     {/* Customer Selection */}
                     <div>
@@ -135,7 +182,10 @@ const CreateOrderForm = ({ onSuccess, onCancel }) => {
                         </label>
                         <select
                             value={formData.customerId}
-                            onChange={(e) => setFormData({ ...formData, customerId: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({ ...formData, customerId: e.target.value });
+                                if (error) setError(null);
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             disabled={loading}
                         >
@@ -155,7 +205,10 @@ const CreateOrderForm = ({ onSuccess, onCancel }) => {
                         </label>
                         <select
                             value={formData.userId}
-                            onChange={(e) => setFormData({ ...formData, userId: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({ ...formData, userId: e.target.value });
+                                if (error) setError(null);
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             disabled={loading}
                         >
@@ -250,14 +303,14 @@ const CreateOrderForm = ({ onSuccess, onCancel }) => {
                         disabled={!isFormValid() || loading}
                         className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
                     >
-                        Create and Continue Creating
+                        {loading ? 'Creating...' : 'Create and Continue Creating'}
                     </button>
                     <button
                         onClick={() => handleCreateOrder(false, true)}
                         disabled={!isFormValid() || loading}
                         className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
                     >
-                        Create and Go Back
+                        {loading ? 'Creating...' : 'Create and Go Back'}
                     </button>
                     <button
                         onClick={onCancel}
