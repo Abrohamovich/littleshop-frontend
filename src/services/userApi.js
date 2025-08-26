@@ -1,4 +1,5 @@
 import {handleResponse} from "../utils/errorUtil.js";
+import { authService } from './authService.js';
 
 export const userApi = {
     async getUsers(page = 0, size = 10, firstName = '', lastName = '', email = '') {
@@ -12,9 +13,7 @@ export const userApi = {
 
         const response = await fetch(`/api/v1/users?${params}`, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: authService.getAuthHeaders(),
         });
 
         return handleResponse(response);
@@ -23,9 +22,7 @@ export const userApi = {
     async createUser(data) {
         const response = await fetch('/api/v1/users', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: authService.getAuthHeaders(),
             body: JSON.stringify(data)
         });
 
@@ -34,7 +31,8 @@ export const userApi = {
 
     async deleteUser(id) {
         const response = await fetch(`/api/v1/users/${id}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: authService.getAuthHeaders()
         });
 
         return handleResponse(response);
@@ -43,9 +41,7 @@ export const userApi = {
     async getUserById(id) {
         const response = await fetch(`/api/v1/users/${id}`, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: authService.getAuthHeaders(),
         });
 
         return handleResponse(response);
@@ -54,9 +50,7 @@ export const userApi = {
     async updateUser(id, data) {
         const response = await fetch(`/api/v1/users/${id}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: authService.getAuthHeaders(),
             body: JSON.stringify(data)
         });
 

@@ -1,4 +1,5 @@
 import {handleResponse} from "../utils/errorUtil.js";
+import { authService } from './authService.js';
 
 export const customerApi = {
     async getCustomers(page = 0, size = 10, firstName = '', lastName = '', email = '') {
@@ -12,9 +13,7 @@ export const customerApi = {
 
         const response = await fetch(`/api/v1/customers?${params}`, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: authService.getAuthHeaders(),
         });
 
         return handleResponse(response);
@@ -23,9 +22,7 @@ export const customerApi = {
     async createCustomer(data) {
         const response = await fetch('/api/v1/customers', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: authService.getAuthHeaders(),
             body: JSON.stringify(data)
         });
 
@@ -34,7 +31,8 @@ export const customerApi = {
 
     async deleteCustomer(id) {
         const response = await fetch(`/api/v1/customers/${id}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: authService.getAuthHeaders()
         });
 
         return handleResponse(response);
@@ -43,9 +41,7 @@ export const customerApi = {
     async getCustomerById(id) {
         const response = await fetch(`/api/v1/customers/${id}`, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: authService.getAuthHeaders(),
         });
 
         return handleResponse(response);
@@ -54,9 +50,7 @@ export const customerApi = {
     async updateCustomer(id, data) {
         const response = await fetch(`/api/v1/customers/${id}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: authService.getAuthHeaders(),
             body: JSON.stringify(data)
         });
 

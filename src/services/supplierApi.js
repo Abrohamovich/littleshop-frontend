@@ -1,4 +1,5 @@
 import {handleResponse} from "../utils/errorUtil.js";
+import { authService } from './authService.js';
 
 export const supplierApi = {
     async getSuppliers(page = 0, size = 10, name = '', email = '', phone = '') {
@@ -12,9 +13,7 @@ export const supplierApi = {
 
         const response = await fetch(`/api/v1/suppliers?${params}`, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: authService.getAuthHeaders(),
         });
 
         return handleResponse(response);
@@ -23,9 +22,7 @@ export const supplierApi = {
     async createSupplier(data) {
         const response = await fetch('/api/v1/suppliers', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: authService.getAuthHeaders(),
             body: JSON.stringify(data)
         });
 
@@ -43,9 +40,7 @@ export const supplierApi = {
     async getSupplierById(id) {
         const response = await fetch(`/api/v1/suppliers/${id}`, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: authService.getAuthHeaders(),
         });
 
         return handleResponse(response);
@@ -54,9 +49,7 @@ export const supplierApi = {
     async updateSupplier(id, data) {
         const response = await fetch(`/api/v1/suppliers/${id}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: authService.getAuthHeaders(),
             body: JSON.stringify(data)
         });
 

@@ -1,4 +1,5 @@
 import {handleResponse} from '../utils/errorUtil.js';
+import { authService } from './authService.js';
 
 export const categoryApi = {
     async getCategories(page = 0, size = 10, name = '', description = '') {
@@ -11,9 +12,7 @@ export const categoryApi = {
 
         const response = await fetch(`/api/v1/categories?${params}`, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: authService.getAuthHeaders()
         });
 
         return handleResponse(response);
@@ -22,9 +21,7 @@ export const categoryApi = {
     async createCategory(data) {
         const response = await fetch('/api/v1/categories', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: authService.getAuthHeaders(),
             body: JSON.stringify(data)
         });
 
@@ -42,9 +39,7 @@ export const categoryApi = {
     async getCategoryById(id) {
         const response = await fetch(`/api/v1/categories/${id}`, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: authService.getAuthHeaders(),
         });
 
         return handleResponse(response);
@@ -53,9 +48,7 @@ export const categoryApi = {
     async updateCategory(id, data) {
         const response = await fetch(`/api/v1/categories/${id}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: authService.getAuthHeaders(),
             body: JSON.stringify(data)
         });
 
